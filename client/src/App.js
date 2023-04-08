@@ -1,23 +1,31 @@
-import logo from './logo.svg';
+import { useAuth0 } from '@auth0/auth0-react';
+import { useNavigate } from 'react-router-dom';
 import './App.css';
 
 function App() {
+  const navigate = useNavigate();
+  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const signUp = () => loginWithRedirect({ screen_hint: "signup" });
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <h1>Playlister</h1>
+      <div>
+        {!isAuthenticated ? (
+          <button className="btn-primary" onClick={loginWithRedirect}>
+            Login
+          </button>
+        ) : (
+          <button className="btn-primary" onClick={() => navigate("/app")}>
+            Enter App
+          </button>
+        )}
+      </div>
+      <div>
+        <button className="btn-secondary" onClick={signUp}>
+          Create Account
+        </button>
+      </div>
     </div>
   );
 }

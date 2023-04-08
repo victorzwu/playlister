@@ -8,6 +8,9 @@ import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import { Auth0TokenProvider } from "./contexts/Auth0Context";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+
+const requestedScopes = ["profile", "email"];
+
 root.render(
   <React.StrictMode>
     <Auth0Provider

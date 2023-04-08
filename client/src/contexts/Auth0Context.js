@@ -3,7 +3,9 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 const Auth0Context = React.createContext();
 
-function Auth0TokenProvider() {
+const requestedScopes = ["profile", "email"];
+
+function Auth0TokenProvider({ children }) {
   const { getAccessTokenSilently, isAuthenticated } = useAuth0();
   const [accessToken, setAccessToken] = useState();
 
@@ -29,9 +31,7 @@ function Auth0TokenProvider() {
 
   const value = { accessToken, setAccessToken };
   return (
-    <Auth0Context.Provider value={value}>
-      {children}
-    </Auth0Context.Provider>
+    <Auth0Context.Provider value={value}>{children}</Auth0Context.Provider>
   );
 }
 
