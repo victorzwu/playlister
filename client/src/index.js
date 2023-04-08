@@ -11,6 +11,16 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 
 const requestedScopes = ["profile", "email"];
 
+function RequireAuth({ children }) {
+  const { isAuthenticated, isLoading } = useAuth0();
+
+  if (!isLoading && !isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+}
+
 root.render(
   <React.StrictMode>
     <Auth0Provider
@@ -26,6 +36,17 @@ root.render(
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<App />} />
+            <Route path="/verify-user" element={<VerifyUser />} />
+            <Route
+              path="app"
+              element={
+                <RequireAuth>
+                  <AppLayout />
+                </RequireAuth>
+              }
+            >
+              <Route index element={<Profile />} />
+            </Route>
           </Routes>
         </BrowserRouter>
       </Auth0TokenProvider>
