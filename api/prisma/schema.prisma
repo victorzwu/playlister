@@ -18,9 +18,3 @@ model User {
   body      String   @db.VarChar(255)
   year      String   @db.VarChar(255)
 }
-
-model PlayList {
-
-}
-
-model 
