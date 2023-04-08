@@ -3,7 +3,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 const Auth0Context = React.createContext();
 
-function Auth0Provider() {
+function Auth0TokenProvider() {
   const { getAccessTokenSilently, isAuthenticated } = useAuth0();
   const [accessToken, setAccessToken] = useState();
 
@@ -29,12 +29,12 @@ function Auth0Provider() {
 
   const value = { accessToken, setAccessToken };
   return (
-    <AuthTokenContext.Provider value={value}>
+    <Auth0Context.Provider value={value}>
       {children}
-    </AuthTokenContext.Provider>
+    </Auth0Context.Provider>
   );
 }
 
 const useAuthToken = () => useContext(Auth0Context);
 
-export { useAuthToken, Auth0Provider };
+export { useAuthToken, Auth0TokenProvider };

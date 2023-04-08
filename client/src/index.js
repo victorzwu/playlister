@@ -5,7 +5,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
-import { AuthTokenProvider } from "./AuthTokenContext";
+import { Auth0TokenProvider } from "./contexts/Auth0Context";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -19,13 +19,13 @@ root.render(
         scope: requestedScopes.join(" "),
       }}
     >
-      <AuthTokenProvider>
+      <Auth0TokenProvider>
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<App />} />
           </Routes>
         </BrowserRouter>
-      </AuthTokenProvider>
+      </Auth0TokenProvider>
     </Auth0Provider>
   </React.StrictMode>
 );
