@@ -8,6 +8,8 @@ import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import { Auth0TokenProvider } from "./contexts/Auth0Context";
 import Profile from "./pages/Profile";
 import VerifyUser from "./pages/VerifyUser";
+import AppLayout from "./AppLayout";
+import Error from "./pages/Error";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -49,6 +51,7 @@ root.render(
             >
               <Route index element={<Profile />} />
             </Route>
+            <Route path="*" element={<Error />} />
           </Routes>
         </BrowserRouter>
       </Auth0TokenProvider>
