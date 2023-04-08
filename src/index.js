@@ -1,13 +1,32 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
+import { AuthTokenProvider } from "./AuthTokenContext";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <App />
+    <Auth0Provider
+      domain={process.env.REACT_APP_AUTH0_DOMAIN}
+      clientId={process.env.REACT_APP_AUTH0_CLIENT_ID}
+      authorizationParams={{
+        redirect_uri: `${window.location.origin}/verify-user`,
+        audience: process.env.REACT_APP_AUTH0_AUDIENCE,
+        scope: requestedScopes.join(" "),
+      }}
+    >
+      <AuthTokenProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<App />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthTokenProvider>
+    </Auth0Provider>
   </React.StrictMode>
 );
 
