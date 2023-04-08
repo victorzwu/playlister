@@ -6,6 +6,8 @@ import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import { Auth0TokenProvider } from "./contexts/Auth0Context";
+import Profile from "./pages/Profile";
+import VerifyUser from "./pages/VerifyUser";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
