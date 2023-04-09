@@ -22,6 +22,14 @@ app.use(morgan("dev"));
 const { PrismaClient } = pkg;
 const prisma = new PrismaClient();
 
+
+const spotifyWebApi = require('spotify-web-api-node');
+const scopes = ['user-read-private', 'user-read-email'];
+const redirectUri = 'https://example.com/callback';
+const clientId = '5fe01282e44241328a84e7c5cc169165';
+const state = 'some-state-of-my-choice';
+
+
 // get Profile information of authenticated user
 app.get("/me", requireAuth, async (req, res) => {
   const auth0Id = req.auth.payload.sub;

@@ -10,12 +10,14 @@ import Profile from "./pages/Profile";
 import VerifyUser from "./pages/VerifyUser";
 import AppLayout from "./AppLayout";
 import Error from "./pages/Error";
+import SpotifyLogin from "./pages/SpotifyLogin";
+import SelectPlaylist from "./pages/SelectPlaylist";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 const requestedScopes = ["profile", "email"];
 
-function RequireAuth({ children }) {
+function RequireAuth0({ children }) {
   const { isAuthenticated, isLoading } = useAuth0();
 
   if (!isLoading && !isAuthenticated) {
@@ -23,6 +25,14 @@ function RequireAuth({ children }) {
   }
 
   return children;
+}
+
+function RequireSpotifyAuth({ children }) {
+  // const { isAuthenticated, isLoading } = useAuth0();
+  // if (!isLoading && !isAuthenticated) {
+  //   return <Navigate to="/" replace />;
+  // }
+  // return children;
 }
 
 root.render(
@@ -44,11 +54,22 @@ root.render(
             <Route
               path="app"
               element={
-                <RequireAuth>
+                <RequireAuth0>
                   <AppLayout />
-                </RequireAuth>
+                </RequireAuth0>
               }
             >
+              <Route path="/spotifylogin" element={SpotifyLogin} />
+              <Route
+                path="spotify"
+                element={
+                  <RequireSpotifyAuth>
+                    <AppLayout />
+                  </RequireSpotifyAuth>
+                }
+              >
+                <Route path="/selectplaylist" element={SelectPlaylist} />
+              </Route>
               <Route index element={<Profile />} />
             </Route>
             <Route path="*" element={<Error />} />
