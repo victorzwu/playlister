@@ -12,6 +12,7 @@ import AppLayout from "./AppLayout";
 import Error from "./pages/Error";
 import SpotifyLogin from "./pages/SpotifyLogin";
 import SelectPlaylist from "./pages/SelectPlaylist";
+import SpotifyProvider from "./contexts/SpotifyContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -50,7 +51,7 @@ root.render(
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<App />} />
-            <Route path="/verify-user" element={<VerifyUser />} />
+            <Route path="verify-user" element={<VerifyUser />} />
             <Route
               path="app"
               element={
@@ -59,18 +60,14 @@ root.render(
                 </RequireAuth0>
               }
             >
-              <Route path="/spotifylogin" element={SpotifyLogin} />
+              <Route index element={<Profile />} />
+              <Route path="spotifylogin" element={<SpotifyLogin />} />
               <Route
                 path="spotify"
-                element={
-                  <RequireSpotifyAuth>
-                    <AppLayout />
-                  </RequireSpotifyAuth>
-                }
+                element={<SpotifyProvider></SpotifyProvider>}
               >
-                <Route path="/selectplaylist" element={SelectPlaylist} />
+                <Route path="/" element={<SelectPlaylist />} />
               </Route>
-              <Route index element={<Profile />} />
             </Route>
             <Route path="*" element={<Error />} />
           </Routes>

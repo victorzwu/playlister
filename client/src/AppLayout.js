@@ -20,6 +20,9 @@ export default function AppLayout() {
               <Link to="/app">Profile</Link>
             </li>
             <li>
+              <Link to="/app/spotifylogin">Spotify</Link>
+            </li>
+            <li>
               <button
                 className="exit-button"
                 onClick={() => logout({ returnTo: window.location.origin })}
