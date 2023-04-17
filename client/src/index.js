@@ -22,7 +22,14 @@ import SpotifyProvider from "./contexts/SpotifyContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
-const requestedScopes = ["profile", "email"];
+const requestedScopes = [
+  "profile",
+  "email",
+  "delete:user",
+  "edit:user",
+  "read:user",
+  "write:user",
+];
 
 function RequireAuth0({ children }) {
   const { isAuthenticated, isLoading } = useAuth0();

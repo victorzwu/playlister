@@ -1,45 +1,46 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuthToken } from "./Auth0Context";
 
 const SpotifyContext = React.createContext();
 
 const code = new URLSearchParams(window.location.search).get("code");
 
-export function useAuthSpotify(code) {
+export function useAuthSpotify(code, accessToken) {
   const [spotifyToken, setSpotifyToken] = useState(null);
 
-  const { accessToken } = useAuthToken();
+
+  // console.log("access token: ", accessToken);
 
   useEffect(() => {
-    if(!code)
-    {
+    if (!code || !accessToken) {
       return;
-    }
-    async function authenticate(code) {
-      const data = await fetch(`${process.env.REACT_APP_API_URL}/accesstoken`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({
-          code: code,
-        }),
-      });
-      console.log("data: ", data);
+    } else {
+      async function authenticate(code) {
+        const data = await fetch(`${process.env.REACT_APP_API_URL}/spotifytoken`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({
+            code: code,
+          }),
+        });
+        console.log("data: ", data);
 
-      if (data.ok) {
-        const response = await data.json();
-        console.log("response: ", response)
-        return response;
-      } else {
-        console.log("failed");
-        return null;
+        if (data.ok) {
+          const response = await data.json();
+          console.log("response: ", response);
+          return response;
+        } else {
+          console.log("failed");
+          return null;
+        }
       }
+      setSpotifyToken(authenticate(code));
+      console.log("spotify token: ", spotifyToken);
     }
-    setSpotifyToken(authenticate(code));
-    console.log("spotify token: ", spotifyToken)
-  }, []);
+  }, [accessToken]);
 
   return { spotifyToken };
 }
@@ -47,9 +48,12 @@ export function useAuthSpotify(code) {
 function SpotifyProvider({ children }) {
   // const { accessToken, connecting, SignOut, error, setError, tokenExpired } =
   //   useAuthSpotify(code);
-  const { spotifyToken } = useAuthSpotify(code);
+  const { accessToken } = useAuthToken();
+  const { spotifyToken } = useAuthSpotify(code, accessToken);
 
-  console.log("token in provider", spotifyToken);
+  // console.log("spotify token ", spotifyToken)
+
+  // console.log("token in provider", spotifyToken);
 
   // const check = code;
   // const value = { check };

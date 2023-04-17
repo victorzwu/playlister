@@ -3,7 +3,14 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 const Auth0Context = React.createContext();
 
-const requestedScopes = ["profile", "email"];
+const requestedScopes = [
+  "profile",
+  "email",
+  "delete:user",
+  "edit:user",
+  "read:user",
+  "write:user",
+];;
 
 function Auth0TokenProvider({ children }) {
   const { getAccessTokenSilently, isAuthenticated } = useAuth0();

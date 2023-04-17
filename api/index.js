@@ -61,6 +61,7 @@ app.post("/verify-user", requireAuth, async (req, res) => {
         email,
         auth0Id,
         name,
+        playlists: {},
       },
     });
 
@@ -68,11 +69,13 @@ app.post("/verify-user", requireAuth, async (req, res) => {
   }
 });
 
-app.post("/accesstoken", requireAuth, async (req, res) => {
+app.put("/spotifytoken", requireAuth, async (req, res) => {
   const code = req.body.code;
+
   const auth0Id = req.auth.payload.sub;
 
-  // console.log("code in server: ", code);
+  console.log("code in server: ", code);
+  console.log("auth0Id in server: ", auth0Id);
 
   var spotifyApi = new SpotifyWebApi({
     clientId: process.env.REACT_APP_SPOTIFY_CLIENT_ID,
@@ -90,29 +93,55 @@ app.post("/accesstoken", requireAuth, async (req, res) => {
 
         const newUser = await prisma.user.update({
           where: {
-            auth0Id
+            auth0Id: auth0Id,
           },
           data: {
             accessToken: data.body["access_token"],
             refreshToken: data.body["refresh_token"],
-            tokenTime: data.body["expires_in"]
+            displayName: data.body["display_name"],
           },
         });
 
-        res.json({
-          accessToken: data.body["access_token"],
-          refreshToken: data.body["refresh_token"],
-          expiresIn: data.body["expires_in"],
-        });
-        // Set the access token on the API object to use it in later calls
         spotifyApi.setAccessToken(data.body["access_token"]);
         spotifyApi.setRefreshToken(data.body["refresh_token"]);
+
+        spotifyApi.getUserPlaylists(data.body["display_name"]).then(
+          function (data) {
+            const playlists = data.body;
+            playlists.items.map(async (x) => {
+              const newItem = await prisma.playlist
+                .create({
+                  data: {
+                    id: parseInt(x.id),
+                    tracks: {},
+                    name: x.name,
+                    owner: { connect: { auth0Id } },
+                  },
+                })
+                .catch((e) => console.log(e));
+            });
+          },
+          function (err) {
+            console.log("Something went wrong!", err);
+          }
+        );
+
+        res.json(newUser);
+        // res.json({
+        //   accessToken: data.body["access_token"],
+        //   refreshToken: data.body["refresh_token"],
+        //   expiresIn: data.body["expires_in"],
+        // });
+        // // Set the access token on the API object to use it in later calls
+        // spotifyApi.setAccessToken(data.body["access_token"]);
+        // spotifyApi.setRefreshToken(data.body["refresh_token"]);
       },
       function (err) {
         console.log("Something went wrong!", err);
       }
     )
-    .catch(() => {
+    .catch((e) => {
+      console.log("Something went wrong!", e);
       res.sendStatus(400);
     });
 });

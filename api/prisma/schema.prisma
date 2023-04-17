@@ -11,11 +11,29 @@ datasource db {
 }
 
 model User {
-  id            Int        @id @default(autoincrement())
-  email         String     @unique @default("")
-  auth0Id       String     @unique @default("")
+  id            Int         @id @default(autoincrement())
+  email         String      @unique @default("")
+  auth0Id       String      @unique @default("")
   name          String?
-  accessToken   String?    @unique @default("")
-  refreshToken  String?    @unique @default("")
-  tokenTime     DateTime?  
+  displayName   String?     @unique
+  accessToken   String?     @db.Text
+  refreshToken  String?     @unique @default("")
+  tokenTime     DateTime?   @updatedAt
+  playlists     Playlist[] 
+}
+
+model Playlist {
+  id          Int           @id @unique
+  tracks      Track[]
+  name        String
+  owner       User          @relation(fields: [authorId], references: [id])
+  authorId    Int           
+}
+
+model Track {
+  id          Int           @id @unique
+  name        String        
+  preview     String
+  playlist    Playlist      @relation(fields: [playlistId], references: [id])
+  playlistId  Int           
 }
