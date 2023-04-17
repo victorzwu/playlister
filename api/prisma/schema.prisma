@@ -11,8 +11,11 @@ datasource db {
 }
 
 model User {
-  id           Int      @id @default(autoincrement())
-  email        String   @unique @default("")
-  auth0Id      String   @unique @default("")
-  name         String?
+  id            Int        @id @default(autoincrement())
+  email         String     @unique @default("")
+  auth0Id       String     @unique @default("")
+  name          String?
+  accessToken   String?    @unique @default("")
+  refreshToken  String?    @unique @default("")
+  tokenTime     DateTime?  
 }

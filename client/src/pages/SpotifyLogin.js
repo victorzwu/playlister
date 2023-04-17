@@ -5,9 +5,8 @@ export default function SpotifyLogin() {
   var spotifyApi = new SpotifyWebApi({
     clientId: process.env.REACT_APP_SPOTIFY_CLIENT_ID,
     clientSecret: process.env.REACT_APP_SPOTIFY_CLIENT_SECRET,
-    redirectUri: process.env.REACT_APP_REDIRECT_URL,
+    redirectUri: "http://localhost:3000/app/spotify/",
   });
-  console.log(process.env.REACT_APP_SPOTIFY_CLIENT_ID);
 
   var scopes = ["user-read-private", "user-read-email"];
   var state = "";

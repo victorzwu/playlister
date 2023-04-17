@@ -69,36 +69,52 @@ app.post("/verify-user", requireAuth, async (req, res) => {
 });
 
 app.post("/accesstoken", requireAuth, async (req, res) => {
+  const code = req.body.code;
+  const auth0Id = req.auth.payload.sub;
 
-  const spotifyApi = new spotifyWebApi({
-    redirectUri:process.env.REACT_APP_REDIRECT_URL,
-    clientId:process.env.CLIENT_ID,
-    clientSecret:process.env.CLIENT_SECRET,
-})
+  // console.log("code in server: ", code);
 
-spotifyApi.authorizationCodeGrant(code).then(
-  function(data) {
-    console.log('The token expires in ' + data.body['expires_in']);
-    console.log('The access token is ' + data.body['access_token']);
-    console.log('The refresh token is ' + data.body['refresh_token']);
+  var spotifyApi = new SpotifyWebApi({
+    clientId: process.env.REACT_APP_SPOTIFY_CLIENT_ID,
+    clientSecret: process.env.REACT_APP_SPOTIFY_CLIENT_SECRET,
+    redirectUri: "http://localhost:3000/app/spotify/",
+  });
 
-    // Set the access token on the API object to use it in later calls
-    spotifyApi.setAccessToken(data.body['access_token']);
-    spotifyApi.setRefreshToken(data.body['refresh_token']);
-  },
-  function(err) {
-    console.log('Something went wrong!', err);
-  }
-).then(data => {
-  res.json({
-      accessToken:data.body.access_token,
-      refreshToken:data.body.refresh_token,
-      expiresIn: data.body.expires_in
-  })}).catch(() => {
-    res.sendStatus(400)
-})
+  spotifyApi
+    .authorizationCodeGrant(code)
+    .then(
+      async function (data) {
+        console.log("The token expires in " + data.body["expires_in"]);
+        console.log("The access token is " + data.body["access_token"]);
+        console.log("The refresh token is " + data.body["refresh_token"]);
 
+        const newUser = await prisma.user.update({
+          where: {
+            auth0Id
+          },
+          data: {
+            accessToken: data.body["access_token"],
+            refreshToken: data.body["refresh_token"],
+            tokenTime: data.body["expires_in"]
+          },
+        });
 
+        res.json({
+          accessToken: data.body["access_token"],
+          refreshToken: data.body["refresh_token"],
+          expiresIn: data.body["expires_in"],
+        });
+        // Set the access token on the API object to use it in later calls
+        spotifyApi.setAccessToken(data.body["access_token"]);
+        spotifyApi.setRefreshToken(data.body["refresh_token"]);
+      },
+      function (err) {
+        console.log("Something went wrong!", err);
+      }
+    )
+    .catch(() => {
+      res.sendStatus(400);
+    });
 });
 
 app.listen(8000, () => {

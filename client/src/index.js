@@ -3,7 +3,13 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  Outlet,
+} from "react-router-dom";
 import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import { Auth0TokenProvider } from "./contexts/Auth0Context";
 import Profile from "./pages/Profile";
@@ -28,13 +34,13 @@ function RequireAuth0({ children }) {
   return children;
 }
 
-function RequireSpotifyAuth({ children }) {
-  // const { isAuthenticated, isLoading } = useAuth0();
-  // if (!isLoading && !isAuthenticated) {
-  //   return <Navigate to="/" replace />;
-  // }
-  // return children;
-}
+// function RequireSpotifyAuth({ children }) {
+//   const { isAuthenticated, isLoading } = useAuth0();
+//   if (!isLoading && !isAuthenticated) {
+//     return <Navigate to="/" replace />;
+//   }
+//   return children;
+// }
 
 root.render(
   <React.StrictMode>
@@ -64,9 +70,13 @@ root.render(
               <Route path="spotifylogin" element={<SpotifyLogin />} />
               <Route
                 path="spotify"
-                element={<SpotifyProvider></SpotifyProvider>}
+                element={
+                  <SpotifyProvider>
+                    <Outlet />
+                  </SpotifyProvider>
+                }
               >
-                <Route path="/" element={<SelectPlaylist />} />
+                <Route index element={<SelectPlaylist />} />
               </Route>
             </Route>
             <Route path="*" element={<Error />} />
