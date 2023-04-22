@@ -8,7 +8,7 @@ export default function SpotifyLogin() {
     redirectUri: "http://localhost:3000/app/spotify/",
   });
 
-  var scopes = ["user-read-private", "user-read-email", "playlist-read-private"];
+  var scopes = ["user-read-private", "user-read-email", "playlist-read-private", "user-top-read"];
   var state = "";
 
   var SPOTIFY_AUTH_URL = spotifyApi.createAuthorizeURL(scopes, state);

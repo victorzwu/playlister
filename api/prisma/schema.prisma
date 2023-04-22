@@ -31,9 +31,10 @@ model Playlist {
 }
 
 model Track {
-  id          Int           @id @unique
+  id          String        @id @unique
   name        String        
   preview     String
   playlist    Playlist      @relation(fields: [playlistId], references: [id])
-  playlistId  Int           
+  playlistId  Int 
+  rank        Int?          
 }

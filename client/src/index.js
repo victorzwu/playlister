@@ -25,10 +25,18 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 const requestedScopes = [
   "profile",
   "email",
-  "delete:user",
-  "edit:user",
-  "read:user",
   "write:user",
+  "read:user",
+  "update:user",
+  "delete:user",
+  "write:playlist",
+  "read:playlist",
+  "update:playlist",
+  "delete:playlist",
+  "write:track",
+  "read:track",
+  "update:track",
+  "delete:track"
 ];
 
 function RequireAuth0({ children }) {
