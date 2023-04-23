@@ -14,7 +14,7 @@ import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import { Auth0TokenProvider } from "./contexts/Auth0Context";
 import Profile from "./pages/Profile";
 import VerifyUser from "./pages/VerifyUser";
-import AppLayout from "./AppLayout";
+import AppLayout from "./components/AppLayout";
 import Error from "./pages/Error";
 import SpotifyLogin from "./pages/SpotifyLogin";
 import Artist from "./pages/Artist";
@@ -87,8 +87,8 @@ root.render(
                 </RequireAuth0>
               }
             >
-              <Route index element={<Profile />} />
-              <Route path="spotifylogin" element={<SpotifyLogin />} />
+              <Route path="profile" element={<Profile />} />
+              <Route index element={<SpotifyLogin />} />
               <Route
                 path="spotify"
                 element={

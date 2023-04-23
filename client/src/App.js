@@ -1,6 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
-import "./style/app.css";
+import "./style/css/app.css";
 import "./style/css/normalize.css";
 import logo from "./style/assets/whitespotify.png";
 
@@ -12,7 +12,7 @@ function App() {
   return (
     <div className="app">
       <div class="applogo">
-        <img className="logo" src={logo} />
+        <img className="logo" alt="logo" src={logo} />
         <h1>rankify</h1>
       </div>
       <div>
