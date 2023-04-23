@@ -1,5 +1,7 @@
+import "./style/css/appLayout.css";
 import { Outlet, Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
+import logo from "./style/assets/whitespotify.png";
 
 export default function AppLayout() {
   const { user, isLoading, logout } = useAuth0();
@@ -10,7 +12,8 @@ export default function AppLayout() {
 
   return (
     <div className="app">
-      <div className="title">
+      <div class="applogo">
+        <img className="logo" src={logo} />
         <h1>rankify</h1>
       </div>
       <div className="header">

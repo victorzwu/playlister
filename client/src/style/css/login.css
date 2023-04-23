@@ -1,0 +1,38 @@
+.container {
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  flex-direction: column;
+}
+
+.connect {
+  display: flex;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  background-color: transparent;
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: 9999px;
+  border-width: 2px;
+  border-color: #ffffff;
+  font-family: "Gotham Rounded";
+}
+
+.connect:hover {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.connectspan {
+  padding-right: 0.5rem;
+}
+
+.ispan {
+  height: 15px;
+}

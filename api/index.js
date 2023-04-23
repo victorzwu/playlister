@@ -80,7 +80,7 @@ app.put("/spotifytoken", requireAuth, async (req, res) => {
   var spotifyApi = new SpotifyWebApi({
     clientId: process.env.REACT_APP_SPOTIFY_CLIENT_ID,
     clientSecret: process.env.REACT_APP_SPOTIFY_CLIENT_SECRET,
-    redirectUri: "http://localhost:3000/app/spotify/",
+    redirectUri: "http://localhost:3000/app/spotify/artists",
   });
 
   spotifyApi
@@ -147,33 +147,6 @@ app.put("/spotifytoken", requireAuth, async (req, res) => {
                         },
                       });
                     }
-
-                    // spotifyApi.getAlbumTracks(y.id).then(
-                    //   function (track) {
-                    //     track.body.items.map(async (z) => {
-                    //       if (z.id && z.name && z.href) {
-                    //         const newTrack = await prisma.track.upsert({
-                    //           where: {
-                    //             id: z.id,
-                    //           },
-                    //           update: {
-                    //             name: z.name,
-                    //             albumId: z.id,
-                    //           },
-                    //           create: {
-                    //             id: z.id,
-                    //             name: z.name,
-                    //             albumId: y.id,
-                    //             preview: z.href,
-                    //           },
-                    //         });
-                    //       }
-                    //     });
-                    //   },
-                    //   function (err) {
-                    //     console.log("track create", err);
-                    //   }
-                    // );
                   },
                   function (err) {
                     console.log("album create ", err);
@@ -216,6 +189,57 @@ app.get("/get-artists", requireAuth, async (req, res) => {
   } catch (e) {
     console.log("artist await, ", e);
   }
+});
+
+app.get("/get-albums/:artistId", requireAuth, async (req, res) => {
+  // const auth0Id = req.auth.payload.sub;
+  const artistId = req.params.artistId;
+
+  const artist = await prisma.artist.findUnique({
+    where: {
+      id: artistId,
+    },
+  });
+
+  try {
+    const albums = await prisma.album.findMany({
+      where: { artistId: artist.id },
+    });
+    res.json(albums);
+  } catch (e) {
+    console.log("album await, ", e);
+  }
+});
+
+app.get("/get-tracks/:albumId", requireAuth, async (req, res) => {
+  const auth0Id = req.auth.payload.sub;
+
+  const albumId = req.params.albumId;
+
+  const user = await prisma.user.findUnique({
+    where: {
+      auth0Id,
+    },
+  });
+
+  var spotifyApi = new SpotifyWebApi({
+    clientId: process.env.REACT_APP_SPOTIFY_CLIENT_ID,
+    clientSecret: process.env.REACT_APP_SPOTIFY_CLIENT_SECRET,
+    redirectUri: "http://localhost:3000/app/spotify/artists",
+  });
+
+  spotifyApi.setAccessToken(user.accessToken);
+  spotifyApi.setRefreshToken(user.refreshToken);
+
+  spotifyApi.getAlbumTracks(albumId).then(
+    function (track) {
+      const response = track.body.items;
+      res.json(response);
+    },
+    function (err) {
+      console.log("track create", err);
+    }
+  );
 });
 
 app.listen(8000, () => {

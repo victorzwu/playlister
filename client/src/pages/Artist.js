@@ -4,6 +4,7 @@ import { useAuthToken } from "../contexts/Auth0Context";
 import { useSpotify } from "../contexts/SpotifyContext";
 import { Link } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import '../style/css/artist.css'
 
 export default function Artist() {
   const [artists, setArtists] = useState([]);

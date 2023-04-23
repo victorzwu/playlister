@@ -1,9 +1,10 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuthToken } from "../contexts/Auth0Context";
 import { useSpotify } from "../contexts/SpotifyContext";
 import { useParams } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import html2canvas from "html2canvas"
 
 export default function Track() {
   const albumId = useParams().albumId;
@@ -13,6 +14,9 @@ export default function Track() {
   const { accessToken } = useAuthToken();
 
   const { connected } = useSpotify();
+
+  const printRef = useRef();
+
 
   // const [initialData, setInitialData] = useState(null);
 
@@ -70,9 +74,29 @@ export default function Track() {
     console.log(items);
   };
 
+  const handleDownloadImage = async () => {
+    const element = printRef.current;
+    const canvas = await html2canvas(element);
+
+    const data = canvas.toDataURL('image/jpg');
+    const link = document.createElement('a');
+
+    if (typeof link.download === 'string') {
+      link.href = data;
+      link.download = 'image.jpg';
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      window.open(data);
+    }
+  };
+
   return (
     <div>
       Rank tracks from {albumId}
+      <div ref = {printRef}>
       {tracks && (
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId={albumId}>
@@ -101,6 +125,10 @@ export default function Track() {
           </Droppable>
         </DragDropContext>
       )}
+      </div>
+      <button type="button" onClick={handleDownloadImage}>
+        Save as Image
+      </button>
     </div>
   );
 }

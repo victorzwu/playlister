@@ -1,6 +1,8 @@
-import { useAuth0 } from '@auth0/auth0-react';
-import { useNavigate } from 'react-router-dom';
-import './App.css';
+import { useAuth0 } from "@auth0/auth0-react";
+import { useNavigate } from "react-router-dom";
+import "./style/app.css";
+import "./style/css/normalize.css";
+import logo from "./style/assets/whitespotify.png";
 
 function App() {
   const navigate = useNavigate();
@@ -9,7 +11,10 @@ function App() {
 
   return (
     <div className="app">
-      <h1>Playlister</h1>
+      <div class="applogo">
+        <img className="logo" src={logo} />
+        <h1>rankify</h1>
+      </div>
       <div>
         {!isAuthenticated ? (
           <button className="btn-primary" onClick={loginWithRedirect}>

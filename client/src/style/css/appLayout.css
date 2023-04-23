@@ -1,0 +1,49 @@
+
+  .title {
+    font-size: 12px;
+    font-family: "Gotham Rounded Bold";
+    text-align: center;
+  }
+  
+  .header {
+    width: 100%;
+    border: 1px solid orange;
+  
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin: 5px 0;
+  }
+  
+  .content {
+    width: 100%;
+    border: 1px solid lightskyblue;
+    margin-top: 5px;
+  }
+  
+  .menu-list {
+    list-style: none;
+    display: flex;
+    justify-content: space-evenly;
+    padding: 0;
+  }
+  
+  .menu-list li {
+    margin-right: 8px;
+  }
+  
+  .exit-button {
+    background-color: lightcoral;
+  }
+  
+  .loading {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background-color: #1b1b1b;
+    color: aliceblue;
+    height: 100vh;
+    font-size: 36px;
+    font-family: "Gotham Rounded Bold";
+  }
+  
