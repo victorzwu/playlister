@@ -39,6 +39,7 @@
   background-color: #1b1b1b;
   height: 100%;
   flex: 5;
+  overflow-y: scroll;
 }
 
 .menu-list {
@@ -57,7 +58,6 @@
 .menu-button{
   text-decoration: none;
   color: white;
-  justify-content: space-between;
 }
 
 .menu-button:hover{

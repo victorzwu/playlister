@@ -4,7 +4,7 @@ import { useAuthToken } from "../contexts/Auth0Context";
 import { useSpotify } from "../contexts/SpotifyContext";
 import { Link } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import '../style/css/artist.css'
+import "../style/css/artist.css";
 
 export default function Artist() {
   const [artists, setArtists] = useState([]);
@@ -49,16 +49,21 @@ export default function Artist() {
 
   return (
     <div>
-      Pick one of your favorite artists
-      <ul>
-        {artists &&
-          !rank &&
-          artists.map((x) => (
-            <li key={x.id}>
-              <Link to={x.id}>{x.name}</Link>
-            </li>
-          ))}
-      </ul>
+      <div className="artist-container">
+        Pick one of your favorite artists
+        <ul>
+          {artists &&
+            !rank &&
+            artists.map((x) => (
+              <li key={x.id}>
+                <Link className="artist-card" to={x.id}>
+                  <img className="artist-image" src={x.image} alt="" />
+                  {x.name}
+                </Link>
+              </li>
+            ))}
+        </ul>
+      </div>
       {artists && rank && (
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId={"artists"}>

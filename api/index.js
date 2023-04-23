@@ -23,11 +23,6 @@ app.use(morgan("dev"));
 const { PrismaClient } = pkg;
 const prisma = new PrismaClient();
 
-// const scopes = ["user-read-private", "user-read-email"];
-// const redirectUri = "https://example.com/callback";
-// const clientId = "5fe01282e44241328a84e7c5cc169165";
-// const state = "some-state-of-my-choice";
-
 // get Profile information of authenticated user
 app.get("/me", requireAuth, async (req, res) => {
   const auth0Id = req.auth.payload.sub;
@@ -74,9 +69,6 @@ app.put("/spotifytoken", requireAuth, async (req, res) => {
 
   const auth0Id = req.auth.payload.sub;
 
-  // console.log("code in server: ", code);
-  // console.log("auth0Id in server: ", auth0Id);
-
   var spotifyApi = new SpotifyWebApi({
     clientId: process.env.REACT_APP_SPOTIFY_CLIENT_ID,
     clientSecret: process.env.REACT_APP_SPOTIFY_CLIENT_SECRET,
@@ -86,9 +78,6 @@ app.put("/spotifytoken", requireAuth, async (req, res) => {
   spotifyApi
     .authorizationCodeGrant(code)
     .then(async function (data) {
-      // console.log("The token expires in " + data.body["expires_in"]);
-      // console.log("The access token is " + data.body["access_token"]);
-      // console.log("The refresh token is " + data.body["refresh_token"]);
       const newUser = await prisma.user.update({
         where: {
           auth0Id: auth0Id,
@@ -106,7 +95,6 @@ app.put("/spotifytoken", requireAuth, async (req, res) => {
       spotifyApi.getMyTopArtists().then(
         function (data) {
           const artists = data.body;
-
           artists.items.map(
             async (x) => {
               const newArtists = await prisma.artist
@@ -117,12 +105,14 @@ app.put("/spotifytoken", requireAuth, async (req, res) => {
                   update: {
                     name: x.name,
                     owner: { connect: { auth0Id } },
+                    image: x.images[0].url,
                   },
                   create: {
                     id: x.id,
                     albums: {},
                     name: x.name,
                     owner: { connect: { auth0Id } },
+                    image: x.images[0].url,
                   },
                 })
                 .catch((e) => console.log("artists create error:", e));

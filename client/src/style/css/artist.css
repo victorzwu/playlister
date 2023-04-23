@@ -1,0 +1,19 @@
+.artist-card{
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+.artist-image{
+    width: 100px;
+}
+
+.artist-container{
+
+}
+
+ul {
+    list-style-type: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }

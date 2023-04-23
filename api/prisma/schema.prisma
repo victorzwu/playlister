@@ -28,6 +28,7 @@ model Artist {
   name        String
   owner       User             @relation(fields: [authorId], references: [id])
   authorId    Int    
+  image       String
 }
 
 model Album {

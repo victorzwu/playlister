@@ -3,7 +3,7 @@ import logo from "../style/assets/whitespotify.png";
 import { Outlet, Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 
-import { BsPersonCircle } from "react-icons/bs";
+import { BsPerson } from "react-icons/bs";
 import { BiHomeAlt2 } from "react-icons/bi";
 
 export default function AppLayout() {
@@ -31,7 +31,7 @@ export default function AppLayout() {
             </li>
             <li>
               <Link className="btn-primary menu-button" to="/app/profile">
-                <BsPersonCircle /> Profile
+                <BsPerson /> Profile
               </Link>
             </li>
             <li>
