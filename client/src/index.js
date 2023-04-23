@@ -17,8 +17,10 @@ import VerifyUser from "./pages/VerifyUser";
 import AppLayout from "./AppLayout";
 import Error from "./pages/Error";
 import SpotifyLogin from "./pages/SpotifyLogin";
-import SelectPlaylist from "./pages/SelectPlaylist";
-import SpotifyProvider from "./contexts/SpotifyContext";
+import Artist from "./pages/Artist";
+import { SpotifyProvider } from "./contexts/SpotifyContext";
+import Album from "./pages/Album";
+import Track from "./pages/Track";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -29,14 +31,18 @@ const requestedScopes = [
   "read:user",
   "update:user",
   "delete:user",
-  "write:playlist",
-  "read:playlist",
-  "update:playlist",
-  "delete:playlist",
+  "write:album",
+  "read:album",
+  "update:album",
+  "delete:album",
+  "write:artist",
+  "read:artist",
+  "update:artist",
+  "delete:artist",
   "write:track",
   "read:track",
   "update:track",
-  "delete:track"
+  "delete:track",
 ];
 
 function RequireAuth0({ children }) {
@@ -91,7 +97,11 @@ root.render(
                   </SpotifyProvider>
                 }
               >
-                <Route index element={<SelectPlaylist />} />
+                <Route path="/app/spotify/" element={<Artist />}>
+                  <Route path=":artistId" element={<Album />}>
+                    <Route path=":albumId" element={<Track />} />
+                  </Route>
+                </Route>
               </Route>
             </Route>
             <Route path="*" element={<Error />} />

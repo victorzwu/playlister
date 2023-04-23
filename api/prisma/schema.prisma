@@ -19,22 +19,31 @@ model User {
   accessToken   String?     @db.Text
   refreshToken  String?     @unique @default("")
   tokenTime     DateTime?   @updatedAt
-  playlists     Playlist[] 
+  artists       Artist[] 
 }
 
-model Playlist {
-  id          Int           @id @unique
+model Artist {
+  id          String           @id @unique
+  albums      Album[]
+  name        String
+  owner       User             @relation(fields: [authorId], references: [id])
+  authorId    Int    
+}
+
+model Album {
+  id          String          @id @unique
   tracks      Track[]
   name        String
-  owner       User          @relation(fields: [authorId], references: [id])
-  authorId    Int           
+  artist      Artist          @relation(fields: [artistId], references: [id])
+  artistId    String
+  rank        Int?    
 }
 
 model Track {
   id          String        @id @unique
   name        String        
   preview     String
-  playlist    Playlist      @relation(fields: [playlistId], references: [id])
-  playlistId  Int 
+  album       Album         @relation(fields: [albumId], references: [id])
+  albumId     String 
   rank        Int?          
 }

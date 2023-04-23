@@ -61,7 +61,7 @@ app.post("/verify-user", requireAuth, async (req, res) => {
         email,
         auth0Id,
         name,
-        playlists: {},
+        artists: {},
       },
     });
 
@@ -74,8 +74,8 @@ app.put("/spotifytoken", requireAuth, async (req, res) => {
 
   const auth0Id = req.auth.payload.sub;
 
-  console.log("code in server: ", code);
-  console.log("auth0Id in server: ", auth0Id);
+  // console.log("code in server: ", code);
+  // console.log("auth0Id in server: ", auth0Id);
 
   var spotifyApi = new SpotifyWebApi({
     clientId: process.env.REACT_APP_SPOTIFY_CLIENT_ID,
@@ -85,54 +85,41 @@ app.put("/spotifytoken", requireAuth, async (req, res) => {
 
   spotifyApi
     .authorizationCodeGrant(code)
-    .then(
-      async function (data) {
-        console.log("The token expires in " + data.body["expires_in"]);
-        console.log("The access token is " + data.body["access_token"]);
-        console.log("The refresh token is " + data.body["refresh_token"]);
+    .then(async function (data) {
+      // console.log("The token expires in " + data.body["expires_in"]);
+      // console.log("The access token is " + data.body["access_token"]);
+      // console.log("The refresh token is " + data.body["refresh_token"]);
+      const newUser = await prisma.user.update({
+        where: {
+          auth0Id: auth0Id,
+        },
+        data: {
+          accessToken: data.body["access_token"],
+          refreshToken: data.body["refresh_token"],
+          displayName: data.body["display_name"],
+        },
+      });
 
-        // const user = await prisma.user.findUnique({
-        //   where: {
-        //     auth0Id,
-        //   },
-        // });
+      spotifyApi.setAccessToken(data.body["access_token"]);
+      spotifyApi.setRefreshToken(data.body["refresh_token"]);
 
-        // if (
-        //   !user.accessToken ||
-        //   !user.refreshToken ||
-        //   Date.now().getTime() >= user.tokenTime.getTime() + 3600
-        // ) {
+      spotifyApi.getMyTopArtists().then(
+        function (data) {
+          const artists = data.body;
 
-        const newUser = await prisma.user.update({
-          where: {
-            auth0Id: auth0Id,
-          },
-          data: {
-            accessToken: data.body["access_token"],
-            refreshToken: data.body["refresh_token"],
-            displayName: data.body["display_name"],
-          },
-        });
-
-        spotifyApi.setAccessToken(data.body["access_token"]);
-        spotifyApi.setRefreshToken(data.body["refresh_token"]);
-
-        spotifyApi.getMyTopArtists().then(
-          function (data) {
-            const artists = data.body;
-
-            artists.items.map(async (x) => {
+          artists.items.map(
+            async (x) => {
               const newArtists = await prisma.artist
                 .upsert({
                   where: {
-                    id: parseInt(x.id),
+                    id: x.id,
                   },
                   update: {
                     name: x.name,
                     owner: { connect: { auth0Id } },
                   },
                   create: {
-                    id: parseInt(x.id),
+                    id: x.id,
                     albums: {},
                     name: x.name,
                     owner: { connect: { auth0Id } },
@@ -140,51 +127,79 @@ app.put("/spotifytoken", requireAuth, async (req, res) => {
                 })
                 .catch((e) => console.log("artists create error:", e));
 
-                spotifyApi.getPlaylistTracks(x.id).then(
-                  function (track) {
-                    track.body.items.map(async (y) => {
-                      if (y.track.id && y.track.name && y.track.href) {
-                        const newTrack = await prisma.track.upsert({
-                          where: {
-                            id: y.track.id,
-                          },
-                          update: {
-                            name: y.track.name,
-                            preview: y.track.href,
-                            playlistId: parseInt(x.id),
-                          },
-                          create: {
-                            id: y.track.id,
-                            name: y.track.name,
-                            preview: y.track.href,
-                            playlistId: parseInt(x.id),
-                          },
-                        });
-                      }
-                    });
+              spotifyApi.getArtistAlbums(x.id).then(function (album) {
+                album.body.items.map(
+                  async (y) => {
+                    if (y.id && y.name) {
+                      const newAlbum = await prisma.album.upsert({
+                        where: {
+                          id: y.id,
+                        },
+                        update: {
+                          name: y.name,
+                          artistId: x.id,
+                        },
+                        create: {
+                          id: y.id,
+                          name: y.name,
+                          artistId: x.id,
+                          tracks: {},
+                        },
+                      });
+                    }
+
+                    // spotifyApi.getAlbumTracks(y.id).then(
+                    //   function (track) {
+                    //     track.body.items.map(async (z) => {
+                    //       if (z.id && z.name && z.href) {
+                    //         const newTrack = await prisma.track.upsert({
+                    //           where: {
+                    //             id: z.id,
+                    //           },
+                    //           update: {
+                    //             name: z.name,
+                    //             albumId: z.id,
+                    //           },
+                    //           create: {
+                    //             id: z.id,
+                    //             name: z.name,
+                    //             albumId: y.id,
+                    //             preview: z.href,
+                    //           },
+                    //         });
+                    //       }
+                    //     });
+                    //   },
+                    //   function (err) {
+                    //     console.log("track create", err);
+                    //   }
+                    // );
                   },
                   function (err) {
-                    console.log("track create", err);
+                    console.log("album create ", err);
                   }
                 );
+              });
+            },
+            function (err) {
+              console.log("artist create", err);
+            }
+          );
+        },
+        function (err) {
+          console.log("Something went wrong!", err);
+        }
+      );
 
-            console.log(data.body);
-          },
-          function (err) {
-            console.log("Something went wrong!", err);
-            
-          }
-        );
-
-        res.json(newUser);
-        })
+      res.json(newUser);
+    })
     .catch((e) => {
       console.log("Something went wrong!", e);
       res.sendStatus(400);
     });
 });
 
-app.get("/get-playlists", requireAuth, async (req, res) => {
+app.get("/get-artists", requireAuth, async (req, res) => {
   const auth0Id = req.auth.payload.sub;
 
   const user = await prisma.user.findUnique({
@@ -193,13 +208,14 @@ app.get("/get-playlists", requireAuth, async (req, res) => {
     },
   });
 
-  const playlists = await prisma.playlist.findMany({
-    where: {
-      authorId: user.id,
-    },
-  });
-
-  res.json(playlists);
+  try {
+    const artists = await prisma.artist.findMany({
+      where: { authorId: user.id },
+    });
+    res.json(artists);
+  } catch (e) {
+    console.log("artist await, ", e);
+  }
 });
 
 app.listen(8000, () => {

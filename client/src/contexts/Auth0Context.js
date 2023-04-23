@@ -6,11 +6,23 @@ const Auth0Context = React.createContext();
 const requestedScopes = [
   "profile",
   "email",
-  "delete:user",
-  "edit:user",
-  "read:user",
   "write:user",
-];;
+  "read:user",
+  "update:user",
+  "delete:user",
+  "write:album",
+  "read:album",
+  "update:album",
+  "delete:album",
+  "write:artist",
+  "read:artist",
+  "update:artist",
+  "delete:artist",
+  "write:track",
+  "read:track",
+  "update:track",
+  "delete:track",
+];
 
 function Auth0TokenProvider({ children }) {
   const { getAccessTokenSilently, isAuthenticated } = useAuth0();
