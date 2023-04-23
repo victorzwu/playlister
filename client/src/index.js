@@ -18,9 +18,9 @@ import AppLayout from "./AppLayout";
 import Error from "./pages/Error";
 import SpotifyLogin from "./pages/SpotifyLogin";
 import Artist from "./pages/Artist";
-import { SpotifyProvider } from "./contexts/SpotifyContext";
 import Album from "./pages/Album";
 import Track from "./pages/Track";
+import { SpotifyProvider } from "./contexts/SpotifyContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -97,11 +97,9 @@ root.render(
                   </SpotifyProvider>
                 }
               >
-                <Route path="/app/spotify/" element={<Artist />}>
-                  <Route path=":artistId" element={<Album />}>
-                    <Route path=":albumId" element={<Track />} />
-                  </Route>
-                </Route>
+                <Route exact path="artists" element={<Artist />} />
+                <Route path="artists/:artistId" element={<Album />} />
+                <Route path="albums/:albumId" element={<Track />} />
               </Route>
             </Route>
             <Route path="*" element={<Error />} />

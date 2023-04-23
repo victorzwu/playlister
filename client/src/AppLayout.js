@@ -11,7 +11,7 @@ export default function AppLayout() {
   return (
     <div className="app">
       <div className="title">
-        <h1>Playlister</h1>
+        <h1>rankify</h1>
       </div>
       <div className="header">
         <nav className="menu">
