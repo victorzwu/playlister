@@ -19,29 +19,31 @@ export default function AppLayout() {
         <div class="applogo">
           <img className="logo" alt="logo" src={logo} />
           <h1>rankify</h1>
+
         </div>
+        <div id="email">{user.name}</div>
         <nav className="menu">
           <ul className="menu-list">
             <li>
-              <Link to="/app/">
-                {" "}
-                <BiHomeAlt2 /> Home{" "}
+              <Link className="btn-primary menu-button" to="/app/">
+                <BiHomeAlt2 /> Home
               </Link>
             </li>
             <li>
-              <Link to="/app/profile">
+              <Link className="btn-primary menu-button" to="/app/profile">
                 <BsPersonCircle /> Profile
               </Link>
             </li>
+            <li>
+              <button
+                className="btn-secondary logout-button"
+                onClick={() => logout({ returnTo: window.location.origin })}
+              >
+                Log Out
+              </button>
+            </li>
           </ul>
         </nav>
-        <div>Welcome 👋 {user.name} </div>
-        <button
-          className="exit-button"
-          onClick={() => logout({ returnTo: window.location.origin })}
-        >
-          LogOut
-        </button>
       </div>
 
       <div className="content">
