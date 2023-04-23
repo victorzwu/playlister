@@ -49,16 +49,25 @@ export default function Artist() {
 
   return (
     <div>
-      <div className="artist-container">
-        Pick one of your favorite artists
-        <ul>
+      <div className="rank-btn-container">
+        <h1> Choose one of your favorite artists or rank them.</h1>
+
+        <button className="btn-primary" onClick={() => rankArtists()}>
+          {!rank && "Rank Artists"}
+          {rank && "Stop Ranking"}
+        </button>
+      </div>
+      <div>
+        <ul className="artist-container">
           {artists &&
             !rank &&
             artists.map((x) => (
               <li key={x.id}>
-                <Link className="artist-card" to={x.id}>
-                  <img className="artist-image" src={x.image} alt="" />
-                  {x.name}
+                <Link className="artist-link" to={x.id}>
+                  <div className="artist-card">
+                    <img className="artist-image" src={x.image} alt="" />
+                    {x.name}
+                  </div>
                 </Link>
               </li>
             ))}
@@ -81,7 +90,11 @@ export default function Artist() {
                         {...provided.dragHandleProps}
                         ref={provided.innerRef}
                       >
-                        <div>{artist.name}</div>
+                        <div className="artist-card drag-card">
+                        <div className="name-text">{index+1}</div>
+                          <img className="artist-image" src={artist.image} />
+                          <div className="name-text">{artist.name}</div>
+                        </div>
                       </div>
                     )}
                   </Draggable>
@@ -92,10 +105,6 @@ export default function Artist() {
           </Droppable>
         </DragDropContext>
       )}
-      <button onClick={() => rankArtists()}>
-        {!rank && "Rank Artists"}
-        {rank && "Stop Ranking"}
-      </button>
     </div>
   );
 }
