@@ -5,6 +5,7 @@ import { useSpotify } from "../contexts/SpotifyContext";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import "../style/css/format.css";
 
 export default function Album() {
   const artistId = useParams().artistId;
@@ -54,13 +55,24 @@ export default function Album() {
 
   return (
     <div>
-      Pick an album from {artistId}
-      <ul>
+      <div className="rank-btn-container">
+      <h1> Choose an album or rank them.</h1>
+        <button className="btn-primary" onClick={() => rankAlbums()}>
+          {!rank && "Rank Albums"}
+          {rank && "Stop Ranking"}
+        </button>
+      </div>
+      <ul className="artist-container">
         {albums &&
           !rank &&
           albums.map((x) => (
             <li key={x.id}>
-              <Link to={"/app/spotify/albums/" + x.id}>{x.name}</Link>
+              <Link className="artist-link" to={"/app/spotify/albums/" + x.id}>
+                <div className="artist-card">
+                  <img className="artist-image" src={x.image} alt="" />
+                  {x.name}
+                </div>
+              </Link>
             </li>
           ))}
       </ul>
@@ -81,7 +93,11 @@ export default function Album() {
                         {...provided.dragHandleProps}
                         ref={provided.innerRef}
                       >
-                        <div>{album.name}</div>
+                        <div className="artist-card drag-card">
+                          <div className="index-text">{index + 1}</div>
+                          <img className="artist-image" src={album.image} />
+                          <div className="name-text">{album.name}</div>
+                        </div>
                       </div>
                     )}
                   </Draggable>
@@ -92,10 +108,6 @@ export default function Album() {
           </Droppable>
         </DragDropContext>
       )}
-      <button onClick={() => rankAlbums()}>
-        {!rank && "Rank Artists"}
-        {rank && "Stop Ranking"}
-      </button>
     </div>
   );
 }

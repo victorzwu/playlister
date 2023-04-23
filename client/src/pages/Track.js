@@ -4,7 +4,9 @@ import { useAuthToken } from "../contexts/Auth0Context";
 import { useSpotify } from "../contexts/SpotifyContext";
 import { useParams } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import html2canvas from "html2canvas"
+import html2canvas from "html2canvas";
+import "../style/css/format.css";
+import { BsFillPlayCircleFill } from "react-icons/bs";
 
 export default function Track() {
   const albumId = useParams().albumId;
@@ -15,8 +17,9 @@ export default function Track() {
 
   const { connected } = useSpotify();
 
-  const printRef = useRef();
+  const [audioPlaying, setAudioPlaying] = useState(false);
 
+  const printRef = useRef();
 
   // const [initialData, setInitialData] = useState(null);
 
@@ -78,12 +81,12 @@ export default function Track() {
     const element = printRef.current;
     const canvas = await html2canvas(element);
 
-    const data = canvas.toDataURL('image/jpg');
-    const link = document.createElement('a');
+    const data = canvas.toDataURL("image/jpg");
+    const link = document.createElement("a");
 
-    if (typeof link.download === 'string') {
+    if (typeof link.download === "string") {
       link.href = data;
-      link.download = 'image.jpg';
+      link.download = "image.jpg";
 
       document.body.appendChild(link);
       link.click();
@@ -93,38 +96,63 @@ export default function Track() {
     }
   };
 
+  function playAudio(audio) {
+    if (audioPlaying) {
+      audio.pause();
+    } else {
+      audio.play();
+      setAudioPlaying(!audioPlaying);
+    }
+  }
+
   return (
     <div>
-      Rank tracks from {albumId}
-      <div ref = {printRef}>
-      {tracks && (
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId={albumId}>
-            {(provided) => (
-              <div ref={provided.innerRef} {...provided.droppableProps}>
-                {tracks.map((track, index) => (
-                  <Draggable
-                    key={track.id}
-                    draggableId={track.id}
-                    index={index}
-                  >
-                    {(provided) => (
-                      <div
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        ref={provided.innerRef}
+      <div className="rank-btn-container">
+        <h1>Rank your favorite tracks.</h1>
+      </div>
+      <div ref={printRef}>
+        {tracks && (
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId={albumId}>
+              {(provided) => (
+                <div ref={provided.innerRef} {...provided.droppableProps}>
+                  {tracks.map((track, index) => {
+                    let audio = new Audio(track.preview_url);
+                    return (
+                      <Draggable
+                        key={track.id}
+                        draggableId={track.id}
+                        index={index}
                       >
-                        <div>{track.name}</div>
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
-      )}
+                        {(provided) => (
+                          <div
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            ref={provided.innerRef}
+                          >
+                            <div className="artist-card drag-card">
+                              <button
+                                className="play-button"
+                                onClick={() => {
+                                  playAudio(audio);
+                                }}
+                              >
+                                <BsFillPlayCircleFill size="40" />
+                              </button>
+                              <div className="index-text">{index + 1}</div>
+                              <div className="name-text">{track.name}</div>
+                            </div>
+                          </div>
+                        )}
+                      </Draggable>
+                    );
+                  })}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+        )}
       </div>
       <button type="button" onClick={handleDownloadImage}>
         Save as Image

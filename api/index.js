@@ -128,12 +128,14 @@ app.put("/spotifytoken", requireAuth, async (req, res) => {
                         update: {
                           name: y.name,
                           artistId: x.id,
+                          image: y.images[0].url
                         },
                         create: {
                           id: y.id,
                           name: y.name,
                           artistId: x.id,
                           tracks: {},
+                          image: y.images[0].url
                         },
                       });
                     }

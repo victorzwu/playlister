@@ -37,7 +37,8 @@ model Album {
   name        String
   artist      Artist          @relation(fields: [artistId], references: [id])
   artistId    String
-  rank        Int?    
+  rank        Int?
+  image       String          @default("")
 }
 
 model Track {
@@ -46,5 +47,6 @@ model Track {
   preview     String
   album       Album         @relation(fields: [albumId], references: [id])
   albumId     String 
+  image       String
   rank        Int?          
 }

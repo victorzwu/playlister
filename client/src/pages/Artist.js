@@ -4,7 +4,7 @@ import { useAuthToken } from "../contexts/Auth0Context";
 import { useSpotify } from "../contexts/SpotifyContext";
 import { Link } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import "../style/css/artist.css";
+import "../style/css/format.css";
 
 export default function Artist() {
   const [artists, setArtists] = useState([]);
@@ -91,7 +91,7 @@ export default function Artist() {
                         ref={provided.innerRef}
                       >
                         <div className="artist-card drag-card">
-                        <div className="name-text">{index+1}</div>
+                          <div className="index-text">{index + 1}</div>
                           <img className="artist-image" src={artist.image} />
                           <div className="name-text">{artist.name}</div>
                         </div>
