@@ -17,11 +17,9 @@ export default function Track() {
 
   const { connected } = useSpotify();
 
-  const [audioPlaying, setAudioPlaying] = useState(false);
+  // const [audioPlaying, setAudioPlaying] = useState(false);
 
   const printRef = useRef();
-
-  // const [initialData, setInitialData] = useState(null);
 
   useEffect(() => {
     const getTracks = async () => {
@@ -44,28 +42,6 @@ export default function Track() {
     }
   }, [accessToken, connected, albumId]);
 
-  // useEffect(() => {
-  //   if (tracks) {
-  //     console.log("tracks", tracks);
-
-  //     let obj = tracks.reduce((ac, a) => ({ ...ac, [a.id]: a }), {});
-
-  //     const trackIds = tracks.map((p) => p.id);
-  //     const newData = {
-  //       trackItems: obj,
-  //       columns: {
-  //         column1: {
-  //           id: "column1",
-  //           title: "Track Ranking",
-  //           trackIds: trackIds,
-  //         },
-  //       },
-  //       columnOrder: ["column1"],
-  //     };
-  //     setInitialData(newData);
-  //   }
-  // }, [tracks]);
-
   const onDragEnd = (result) => {
     if (!result.destination) return;
 
@@ -79,7 +55,14 @@ export default function Track() {
 
   const handleDownloadImage = async () => {
     const element = printRef.current;
-    const canvas = await html2canvas(element);
+    const canvas = await html2canvas(element, {
+      logging: true,
+      letterRendering: 1,
+      allowTaint: false,
+      useCORS: true,
+      width: 1080,
+      height: 1920,
+    });
 
     const data = canvas.toDataURL("image/jpg");
     const link = document.createElement("a");
@@ -97,11 +80,23 @@ export default function Track() {
   };
 
   function playAudio(audio) {
-    if (audioPlaying) {
-      audio.pause();
-    } else {
-      audio.play();
-      setAudioPlaying(!audioPlaying);
+    audio.play();
+  }
+
+  async function submit() {
+    const data = await fetch(
+      `${process.env.REACT_APP_API_URL}/rank-tracks/${albumId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify(tracks),
+      }
+    );
+    if (data.ok) {
+      alert("Your ranking was uploaded succesffully.");
     }
   }
 
@@ -113,6 +108,10 @@ export default function Track() {
         <button className="btn-primary" onClick={handleDownloadImage}>
           Save Image
         </button>
+
+        <button className="btn-primary" onClick={() => submit()}>
+          Submit Ranking
+        </button>
       </div>
       <div ref={printRef}>
         {tracks && (
@@ -122,6 +121,7 @@ export default function Track() {
                 <div ref={provided.innerRef} {...provided.droppableProps}>
                   {tracks.map((track, index) => {
                     let audio = new Audio(track.preview_url);
+                    console.log(track);
                     return (
                       <Draggable
                         key={track.id}
@@ -145,6 +145,12 @@ export default function Track() {
                               </button>
                               <div className="index-text">{index + 1}</div>
                               <div className="name-text">{track.name}</div>
+                              <div className="track-text">
+                                track {track.track_number}
+                              </div>
+                              {track.artists.map((z) => (
+                                <div>{z.name}</div>
+                              ))}
                             </div>
                           </div>
                         )}

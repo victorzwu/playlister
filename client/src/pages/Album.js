@@ -54,7 +54,14 @@ export default function Album() {
 
   const handleDownloadImage = async () => {
     const element = printRef.current;
-    const canvas = await html2canvas(element);
+    const canvas = await html2canvas(element, {
+      logging: true,
+      letterRendering: 1,
+      allowTaint: false,
+      useCORS: true,
+      width: 1080,
+      height: 1920,
+    });
 
     const data = canvas.toDataURL("image/jpg");
     const link = document.createElement("a");
@@ -89,6 +96,7 @@ export default function Album() {
           </button>
         )}
       </div>
+
       <ul className="artist-container">
         {albums &&
           !rank &&
@@ -123,7 +131,7 @@ export default function Album() {
                         >
                           <div className="artist-card drag-card">
                             <div className="index-text">{index + 1}</div>
-                            <img className="artist-image" src={album.image} />
+                            <img className="artist-image" alt="artist" src={album.image} />
                             <div className="name-text">{album.name}</div>
                           </div>
                         </div>
@@ -136,6 +144,23 @@ export default function Album() {
             </Droppable>
           </DragDropContext>
         )}
+        {/* {albums && rank && save && (
+          <div className="printContainer">
+            {albums
+              .splice(0, albums.length < 5 ? albums.length : 5)
+              .map((album, index) => (
+                <div>
+                  {
+                    <div className="artist-card drag-card">
+                      <div className="index-text">{index + 1}</div>
+                      <img className="artist-image" src={album.image} />
+                      <div className="name-text">{album.name}</div>
+                    </div>
+                  }
+                </div>
+              ))}
+          </div>
+        )} */}
       </div>
     </div>
   );

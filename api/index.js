@@ -95,8 +95,10 @@ app.put("/spotifytoken", requireAuth, async (req, res) => {
       spotifyApi.getMyTopArtists().then(
         function (data) {
           const artists = data.body;
+
           artists.items.map(
             async (x) => {
+              // console.log(x.genres);
               const newArtists = await prisma.artist
                 .upsert({
                   where: {
@@ -128,14 +130,14 @@ app.put("/spotifytoken", requireAuth, async (req, res) => {
                         update: {
                           name: y.name,
                           artistId: x.id,
-                          image: y.images[0].url
+                          image: y.images[0].url,
                         },
                         create: {
                           id: y.id,
                           name: y.name,
                           artistId: x.id,
                           tracks: {},
-                          image: y.images[0].url
+                          image: y.images[0].url,
                         },
                       });
                     }
@@ -232,6 +234,62 @@ app.get("/get-tracks/:albumId", requireAuth, async (req, res) => {
       console.log("track create", err);
     }
   );
+});
+
+app.put("/rank-tracks/:albumId", requireAuth, async (req, res) => {
+  const auth0Id = req.auth.payload.sub;
+
+  const albumId = req.params.albumId;
+
+  const tracks = req.body;
+
+  tracks.map(async (track, index) => {
+    if (track.id && track.name && track.href) {
+      const newTrack = await prisma.track.upsert({
+        where: {
+          id: track.id,
+        },
+        update: {
+          rank: index,
+        },
+        create: {
+          id: track.id,
+          name: track.name,
+          albumId: albumId,
+          preview: track.href,
+          rank: index,
+        },
+      });
+    }
+  });
+
+  res.json("succeeded");
+});
+
+app.delete("/delete-rank/:albumId", requireAuth, async (req, res) => {
+  const auth0Id = req.auth.payload.sub;
+
+  const albumId = req.params.albumId;
+
+  const deleteTrack = await prisma.track.deleteMany({
+    where: {
+      albumId: albumId,
+    },
+  });
+
+  res.json(deleteTrack);
+});
+
+app.get("/rank-albums/", requireAuth, async (req, res) => {
+
+  const albums = prisma.album.findMany({
+    where: {
+      NOT: {tracks: {}}
+    }
+  })
+
+  res.json(albums);
+
 });
 
 app.listen(8000, () => {

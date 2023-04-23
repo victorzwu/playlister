@@ -5,6 +5,8 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 import { BsPerson } from "react-icons/bs";
 import { BiHomeAlt2 } from "react-icons/bi";
+import { MdAlbum } from "react-icons/md";
+
 
 export default function AppLayout() {
   const { user, isLoading, logout } = useAuth0();
@@ -16,10 +18,9 @@ export default function AppLayout() {
   return (
     <div className="applayout">
       <div className="header">
-        <div class="applogo">
+        <div className="applogo">
           <img className="logo" alt="logo" src={logo} />
           <h1>rankify</h1>
-
         </div>
         <div id="email">{user.name}</div>
         <nav className="menu">
@@ -27,6 +28,14 @@ export default function AppLayout() {
             <li>
               <Link className="btn-primary menu-button" to="/app/">
                 <BiHomeAlt2 /> Home
+              </Link>
+            </li>
+            <li>
+              <Link
+                className="btn-primary menu-button"
+                to="/app/spotify/rankedalbums"
+              >
+                <MdAlbum /> Ranked Albums
               </Link>
             </li>
             <li>

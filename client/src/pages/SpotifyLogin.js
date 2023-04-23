@@ -21,14 +21,14 @@ export default function SpotifyLogin() {
   var SPOTIFY_AUTH_URL = spotifyApi.createAuthorizeURL(scopes, state);
 
   return (
-    <div class="container">
+    <div className="container">
       <div>
         <h1>Spotify Login</h1>
       </div>
-      <a href={SPOTIFY_AUTH_URL}>
-        <div class="connect">
-          <span class="connectspan">
-            <img class="ispan" src={logo} alt="" />
+      <a className="connect-link" href={SPOTIFY_AUTH_URL}>
+        <div className="connect">
+          <span className="connectspan">
+            <img className="ispan" src={logo} alt="" />
           </span>
           Connect with Spotify
         </div>

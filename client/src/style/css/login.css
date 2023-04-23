@@ -36,3 +36,7 @@
 .ispan {
   height: 15px;
 }
+
+.connect-link{
+    text-decoration: none;
+}

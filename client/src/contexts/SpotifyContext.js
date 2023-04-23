@@ -10,7 +10,6 @@ const code = new URLSearchParams(window.location.search).get("code");
 function SpotifyProvider({ children }) {
   const { accessToken } = useAuthToken();
   const { connected } = useAuthSpotify(accessToken, code);
-  console.log("connected in provider", connected);
 
   return (
     <SpotifyContext.Provider value={{ connected: connected }}>

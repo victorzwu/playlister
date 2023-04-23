@@ -48,7 +48,14 @@ export default function Artist() {
 
   const handleDownloadImage = async () => {
     const element = printRef.current;
-    const canvas = await html2canvas(element);
+    const canvas = await html2canvas(element, {
+      logging: true,
+      letterRendering: 1,
+      allowTaint: false,
+      useCORS: true,
+      width: 1080,
+      height: 1920,
+    });
 
     const data = canvas.toDataURL("image/jpg");
     const link = document.createElement("a");
@@ -93,7 +100,7 @@ export default function Artist() {
               <li key={x.id}>
                 <Link className="artist-link" to={x.id}>
                   <div className="artist-card">
-                    <img className="artist-image" src={x.image} alt="" />
+                    <img className="artist-image" src={x.image} alt="artist" />
                     {x.name}
                   </div>
                 </Link>
@@ -121,7 +128,11 @@ export default function Artist() {
                         >
                           <div className="artist-card drag-card">
                             <div className="index-text">{index + 1}</div>
-                            <img className="artist-image" src={artist.image} />
+                            <img
+                              className="artist-image"
+                              alt="artist"
+                              src={artist.image}
+                            />
                             <div className="name-text">{artist.name}</div>
                           </div>
                         </div>
