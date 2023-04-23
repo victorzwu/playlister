@@ -109,6 +109,10 @@ export default function Track() {
     <div>
       <div className="rank-btn-container">
         <h1>Rank your favorite tracks.</h1>
+
+        <button className="btn-primary" onClick={handleDownloadImage}>
+          Save Image
+        </button>
       </div>
       <div ref={printRef}>
         {tracks && (
@@ -154,9 +158,6 @@ export default function Track() {
           </DragDropContext>
         )}
       </div>
-      <button type="button" onClick={handleDownloadImage}>
-        Save as Image
-      </button>
     </div>
   );
 }

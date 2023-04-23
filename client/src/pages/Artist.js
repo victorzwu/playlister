@@ -1,10 +1,11 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuthToken } from "../contexts/Auth0Context";
 import { useSpotify } from "../contexts/SpotifyContext";
 import { Link } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import "../style/css/format.css";
+import html2canvas from "html2canvas";
 
 export default function Artist() {
   const [artists, setArtists] = useState([]);
@@ -13,6 +14,8 @@ export default function Artist() {
   const { accessToken } = useAuthToken();
 
   const { connected } = useSpotify();
+
+  const printRef = useRef();
 
   useEffect(() => {
     const getArtists = async () => {
@@ -43,6 +46,25 @@ export default function Artist() {
     console.log(items);
   };
 
+  const handleDownloadImage = async () => {
+    const element = printRef.current;
+    const canvas = await html2canvas(element);
+
+    const data = canvas.toDataURL("image/jpg");
+    const link = document.createElement("a");
+
+    if (typeof link.download === "string") {
+      link.href = data;
+      link.download = "image.jpg";
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      window.open(data);
+    }
+  };
+
   function rankArtists() {
     setRank(!rank);
   }
@@ -56,6 +78,12 @@ export default function Artist() {
           {!rank && "Rank Artists"}
           {rank && "Stop Ranking"}
         </button>
+
+        {rank && (
+          <button className="btn-primary" onClick={handleDownloadImage}>
+            Save Image
+          </button>
+        )}
       </div>
       <div>
         <ul className="artist-container">
@@ -73,38 +101,40 @@ export default function Artist() {
             ))}
         </ul>
       </div>
-      {artists && rank && (
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId={"artists"}>
-            {(provided) => (
-              <div ref={provided.innerRef} {...provided.droppableProps}>
-                {artists.map((artist, index) => (
-                  <Draggable
-                    key={artist.id}
-                    draggableId={artist.id}
-                    index={index}
-                  >
-                    {(provided) => (
-                      <div
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        ref={provided.innerRef}
-                      >
-                        <div className="artist-card drag-card">
-                          <div className="index-text">{index + 1}</div>
-                          <img className="artist-image" src={artist.image} />
-                          <div className="name-text">{artist.name}</div>
+      <div ref={printRef}>
+        {artists && rank && (
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId={"artists"}>
+              {(provided) => (
+                <div ref={provided.innerRef} {...provided.droppableProps}>
+                  {artists.map((artist, index) => (
+                    <Draggable
+                      key={artist.id}
+                      draggableId={artist.id}
+                      index={index}
+                    >
+                      {(provided) => (
+                        <div
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          ref={provided.innerRef}
+                        >
+                          <div className="artist-card drag-card">
+                            <div className="index-text">{index + 1}</div>
+                            <img className="artist-image" src={artist.image} />
+                            <div className="name-text">{artist.name}</div>
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
-      )}
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+        )}
+      </div>
     </div>
   );
 }
