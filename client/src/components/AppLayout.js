@@ -48,7 +48,7 @@ export default function AppLayout() {
                 <BsPerson /> Profile
               </Link>
             </li>
-            <li>
+            <li className="logout-li">
               <button
                 className="btn-secondary logout-button"
                 onClick={() => logout({ returnTo: window.location.origin })}

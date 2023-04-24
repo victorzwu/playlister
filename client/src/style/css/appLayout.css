@@ -46,6 +46,10 @@
   overflow-y: scroll;
 }
 
+.menu{
+  width: 30dvw;
+}
+
 .menu-list {
   list-style: none;
   display: flex;
@@ -62,11 +66,17 @@
 .menu-button{
   text-decoration: none;
   color: white;
+  justify-content: space-between;
 }
 
 .menu-button:hover{
   background-color: #ffffff;
   color: #000000;
+}
+
+.logout-li{
+  display: flex;
+  justify-content: center;
 }
 
 .logout-button{
