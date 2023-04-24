@@ -136,8 +136,9 @@ app.put("/spotifytoken", requireAuth, async (req, res) => {
                           id: y.id,
                           name: y.name,
                           artistId: x.id,
-                          tracks: {},
+                          tracks: undefined,
                           image: y.images[0].url,
+                          rank: 0,
                         },
                       });
                     }
@@ -263,6 +264,13 @@ app.put("/rank-tracks/:albumId", requireAuth, async (req, res) => {
     }
   });
 
+  const updateAlbum = await prisma.album.update({
+    where: { id: albumId },
+    data: {
+      rank: 1,
+    },
+  });
+
   res.json("succeeded");
 });
 
@@ -270,6 +278,7 @@ app.delete("/delete-rank/:albumId", requireAuth, async (req, res) => {
   const auth0Id = req.auth.payload.sub;
 
   const albumId = req.params.albumId;
+  console.log(albumId)
 
   const deleteTrack = await prisma.track.deleteMany({
     where: {
@@ -277,19 +286,43 @@ app.delete("/delete-rank/:albumId", requireAuth, async (req, res) => {
     },
   });
 
+  const updateAlbum = await prisma.album.update({
+    where: { id: albumId },
+    data: {
+      rank: 0,
+    },
+  });
+
   res.json(deleteTrack);
 });
 
-app.get("/rank-albums/", requireAuth, async (req, res) => {
+app.get("/get-ranked-albums", requireAuth, async (req, res) => {
+  const auth0Id = req.auth.payload.sub;
 
-  const albums = prisma.album.findMany({
-    where: {
-      NOT: {tracks: {}}
-    }
-  })
+  try {
+    const albums = await prisma.album.findMany({
+      where: { rank: 1 },
+    });
+    console.log("albums", albums);
+    res.json(albums);
+  } catch (e) {
+    console.log(e);
+  }
+});
 
-  res.json(albums);
+app.get("/get-ranked-tracks/:albumId", requireAuth, async (req, res) => {
+  const auth0Id = req.auth.payload.sub;
 
+  const albumId = req.params.albumId;
+
+  try {
+    const tracks = await prisma.track.findMany({
+      where: { albumId: albumId },
+    });
+    res.json(tracks);
+  } catch (e) {
+    console.log(e);
+  }
 });
 
 app.listen(8000, () => {

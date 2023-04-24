@@ -22,6 +22,7 @@ import Album from "./pages/Album";
 import Track from "./pages/Track";
 import { SpotifyProvider } from "./contexts/SpotifyContext";
 import Ranked from "./pages/Ranked";
+import RankedTracks from "./pages/RankedTracks";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -101,7 +102,8 @@ root.render(
                 <Route exact path="artists" element={<Artist />} />
                 <Route path="artists/:artistId" element={<Album />} />
                 <Route path="albums/:albumId" element={<Track />} />
-                <Route path="rankedalbums" element={<Ranked />} />
+                <Route exact path="rankedalbums" element={<Ranked />} />
+                <Route path="rankedalbums/:albumId" element={<RankedTracks />} />
               </Route>
             </Route>
             <Route path="*" element={<Error />} />

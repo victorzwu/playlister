@@ -23,6 +23,20 @@
   width: 90%;
 }
 
+.extra-card{
+    width: 100%;
+    height: auto;
+    padding-top: 5dvb;
+}
+
+.ranked-card {
+    display: flex;
+    flex-direction: column;
+    background-color: #191414;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 5dvb;
+}
 
 .drag-card {
   flex-direction: row;
@@ -60,6 +74,10 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 5dvb;
 }
+
+.extra-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
 .rank-btn-container {
   margin-top: 5dvb;
