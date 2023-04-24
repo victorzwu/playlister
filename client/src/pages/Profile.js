@@ -1,7 +1,7 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect } from "react";
 import "../style/css/profile.css";
-import { useAuthToken } from "../contexts/Auth0Context";
+// import { useAuthToken } from "../contexts/Auth0Context";
 
 
 export default function Profile() {

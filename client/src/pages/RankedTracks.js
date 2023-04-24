@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useAuthToken } from "../contexts/Auth0Context";
 import { useParams } from "react-router-dom";
-import { BsFillPlayCircleFill } from "react-icons/bs";
+// import { BsFillPlayCircleFill } from "react-icons/bs";
 import "../style/css/format.css";
 import { IoChevronBackCircleSharp } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";

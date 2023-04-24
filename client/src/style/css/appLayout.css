@@ -100,3 +100,41 @@
   font-size: 36px;
   font-family: "Gotham Rounded Bold";
 }
+
+@media (max-width: 850px) {
+
+.content {
+  width: 100%;
+}
+
+  .container {
+    width: 100%;
+  }
+
+  .applayout{
+    flex-direction: column;
+    overflow-y: scroll;
+    position: relative;
+    min-height: 100dvb;
+  }
+
+  .header {
+    width: 100%;
+    padding-top:0px;
+    padding: 0px;
+  }
+  .menu {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+  }
+  .menu-list {
+    width: 100%;
+
+  }
+
+  .menu-list li {
+    margin: 0px;
+  }
+
+}

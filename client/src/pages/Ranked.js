@@ -44,7 +44,7 @@ export default function Ranked() {
       }
     );
     const response = await data.json();
-
+      console.log(response);
     setDeleted(!deleted);
   };
 
