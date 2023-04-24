@@ -72,7 +72,7 @@ app.put("/spotifytoken", requireAuth, async (req, res) => {
   var spotifyApi = new SpotifyWebApi({
     clientId: process.env.REACT_APP_SPOTIFY_CLIENT_ID,
     clientSecret: process.env.REACT_APP_SPOTIFY_CLIENT_SECRET,
-    redirectUri: "http://localhost:3000/app/spotify/artists",
+    redirectUri: process.env.REACT_APP_REDIRECT_URL,
   });
 
   spotifyApi
@@ -220,7 +220,7 @@ app.get("/get-tracks/:albumId", requireAuth, async (req, res) => {
   var spotifyApi = new SpotifyWebApi({
     clientId: process.env.REACT_APP_SPOTIFY_CLIENT_ID,
     clientSecret: process.env.REACT_APP_SPOTIFY_CLIENT_SECRET,
-    redirectUri: "http://localhost:3000/app/spotify/artists",
+    redirectUri: process.env.REACT_APP_REDIRECT_URL,
   });
 
   spotifyApi.setAccessToken(user.accessToken);
@@ -325,6 +325,9 @@ app.get("/get-ranked-tracks/:albumId", requireAuth, async (req, res) => {
   }
 });
 
-app.listen(8000, () => {
-  console.log("Server running on http://localhost:8000 🎉 🚀");
+const PORT = parseInt(process.env.PORT) || 8080;
+
+app.listen(PORT, () => {
+ console.log(`Server running on http://localhost:${PORT} 🎉 🚀`);
 });
+

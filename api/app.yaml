@@ -1,0 +1,10 @@
+runtime: nodejs16
+
+env_variables:
+  DATABASE_URL: "mysql://nknhc8w5ch4gsul9q9e0:pscale_pw_uKaVmEE0xoJnPD0UEz3bDEV9cCuaUDSOurd1X0owxWT@aws.connect.psdb.cloud/deploy-test?sslaccept=strict"
+  AUTH0_JWK_URI: "https://playlisterapp.us.auth0.com/.well-known/jwks.json"
+  AUTH0_AUDIENCE: "https://api.playlister"
+  AUTH0_ISSUER: "https://playlisterapp.us.auth0.com"
+  REACT_APP_SPOTIFY_CLIENT_ID: "c98ff3f030e64d3f8284acfde2cb997b"
+  REACT_APP_SPOTIFY_CLIENT_SECRET: "48547335faa743698e594945361b7e09"
+  PORT: 8080
