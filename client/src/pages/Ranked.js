@@ -54,19 +54,22 @@ export default function Ranked() {
         <ul className="artist-container extra-container">
           {albums.map((x) => (
             <li key={x.id}>
-              <div className = "ranked-card" >
+              <div className="ranked-card">
                 <Link
                   className="artist-link"
                   to={"/app/spotify/rankedalbums/" + x.id}
                 >
-                  <div className= "artist-card extra-card">
-
-                      <img className="artist-image" src={x.image} alt="" />
-                      {x.name}
-
+                  <div className="artist-card extra-card">
+                    <img className="artist-image" src={x.image} alt="" />
+                    {x.name}
                   </div>
                 </Link>
-                <button className = "btn-secondary" onClick={() => deleteAlbum(x.id)}>x</button>
+                <div
+                  className="deletebutton"
+                  onClick={() => deleteAlbum(x.id)}
+                >
+                  x
+                </div>
               </div>
             </li>
           ))}

@@ -13,6 +13,8 @@
     padding-inline: 5%;
     padding-top: 20%;
     padding-bottom: 15%;
+    border-radius: 99px;
+    border-width: 3px;
 }
 
 .normal-Text{
