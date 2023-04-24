@@ -7,6 +7,8 @@ import { useParams } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import "../style/css/format.css";
 import html2canvas from "html2canvas";
+import { IoChevronBackCircleSharp } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 export default function Album() {
   const artistId = useParams().artistId;
@@ -19,6 +21,8 @@ export default function Album() {
   const { connected } = useSpotify();
 
   const printRef = useRef();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getAlbums = async () => {
@@ -84,14 +88,19 @@ export default function Album() {
 
   return (
     <div>
+      <div className="backdiv">
+        <button className="backbutton" onClick={() => navigate(-1)}>
+          <IoChevronBackCircleSharp size="30" />
+        </button>
+      </div>
       <div className="rank-btn-container">
-        <h1> Choose an album or rank them.</h1>
-        <button className="btn-primary" onClick={() => rankAlbums()}>
+        <h1 className="over-text"> Choose an album or rank them.</h1>
+        <button className="btn-primary ranked-btn" onClick={() => rankAlbums()}>
           {!rank && "Rank Albums"}
           {rank && "Stop Ranking"}
         </button>
         {rank && (
-          <button className="btn-primary" onClick={handleDownloadImage}>
+          <button className="btn-primary ranked-btn" onClick={handleDownloadImage}>
             Save Image
           </button>
         )}
@@ -131,7 +140,11 @@ export default function Album() {
                         >
                           <div className="artist-card drag-card">
                             <div className="index-text">{index + 1}</div>
-                            <img className="artist-image" alt="artist" src={album.image} />
+                            <img
+                              className="artist-image"
+                              alt="artist"
+                              src={album.image}
+                            />
                             <div className="name-text">{album.name}</div>
                           </div>
                         </div>

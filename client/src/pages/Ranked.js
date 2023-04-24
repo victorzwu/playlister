@@ -64,10 +64,7 @@ export default function Ranked() {
                     {x.name}
                   </div>
                 </Link>
-                <div
-                  className="deletebutton"
-                  onClick={() => deleteAlbum(x.id)}
-                >
+                <div className="deletebutton" onClick={() => deleteAlbum(x.id)}>
                   x
                 </div>
               </div>

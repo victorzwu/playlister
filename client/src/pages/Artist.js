@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import "../style/css/format.css";
 import html2canvas from "html2canvas";
+import { IoChevronBackCircleSharp } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 export default function Artist() {
   const [artists, setArtists] = useState([]);
@@ -16,6 +18,8 @@ export default function Artist() {
   const { connected } = useSpotify();
 
   const printRef = useRef();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getArtists = async () => {
@@ -76,18 +80,24 @@ export default function Artist() {
     setRank(!rank);
   }
 
+
   return (
     <div>
+      <div className="backdiv">
+        <button className="backbutton" onClick={()=>navigate(-1)}>
+          <IoChevronBackCircleSharp size="30" />
+        </button>
+      </div>
       <div className="rank-btn-container">
-        <h1> Choose one of your favorite artists or rank them.</h1>
+        <h1 className="over-text"> Choose one of your favorite artists or rank them.</h1>
 
-        <button className="btn-primary" onClick={() => rankArtists()}>
+        <button className="btn-primary ranked-btn" onClick={() => rankArtists()}>
           {!rank && "Rank Artists"}
           {rank && "Stop Ranking"}
         </button>
 
         {rank && (
-          <button className="btn-primary" onClick={handleDownloadImage}>
+          <button className="btn-primary ranked-btn" onClick={handleDownloadImage}>
             Save Image
           </button>
         )}

@@ -7,6 +7,8 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import html2canvas from "html2canvas";
 import "../style/css/format.css";
 import { BsFillPlayCircleFill } from "react-icons/bs";
+import { IoChevronBackCircleSharp } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 export default function Track() {
   const albumId = useParams().albumId;
@@ -16,6 +18,8 @@ export default function Track() {
   const { accessToken } = useAuthToken();
 
   const { connected } = useSpotify();
+
+  const navigate = useNavigate();
 
   // const [audioPlaying, setAudioPlaying] = useState(false);
 
@@ -96,20 +100,28 @@ export default function Track() {
       }
     );
     if (data.ok) {
-      alert("Your ranking was uploaded succesffully.");
+      alert("Your ranking was uploaded successfully.");
     }
   }
 
   return (
     <div>
+      <div className="backdiv">
+        <button className="backbutton" onClick={() => navigate(-1)}>
+          <IoChevronBackCircleSharp size="30" />
+        </button>
+      </div>
       <div className="rank-btn-container">
-        <h1>Rank your favorite tracks.</h1>
+        <h1 className="over-text">Rank your favorite tracks.</h1>
 
-        <button className="btn-primary" onClick={handleDownloadImage}>
+        <button
+          className="btn-primary ranked-btn"
+          onClick={handleDownloadImage}
+        >
           Save Image
         </button>
 
-        <button className="btn-primary" onClick={() => submit()}>
+        <button className="btn-primary ranked-btn" onClick={() => submit()}>
           Submit Ranking
         </button>
       </div>
@@ -148,9 +160,11 @@ export default function Track() {
                               <div className="track-text">
                                 track {track.track_number}
                               </div>
-                              {track.artists.map((z) => (
-                                <div>{z.name}</div>
-                              ))}
+                              <div className="artist-text">
+                                {track.artists.map((z) => (
+                                  <div>{z.name}</div>
+                                ))}
+                              </div>
                             </div>
                           </div>
                         )}

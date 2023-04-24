@@ -4,12 +4,16 @@ import { useAuthToken } from "../contexts/Auth0Context";
 import { useParams } from "react-router-dom";
 import { BsFillPlayCircleFill } from "react-icons/bs";
 import "../style/css/format.css";
+import { IoChevronBackCircleSharp } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 export default function RankedTracks() {
   const albumId = useParams().albumId;
   const [tracks, setTracks] = useState([]);
 
   const { accessToken } = useAuthToken();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getTracks = async () => {
@@ -24,7 +28,7 @@ export default function RankedTracks() {
         }
       );
       const response = await data.json();
-    //   console.log("response: ", response);
+      //   console.log("response: ", response);
 
       setTracks(
         response.sort((a, b) => {
@@ -37,13 +41,18 @@ export default function RankedTracks() {
     }
   }, [accessToken, albumId]);
 
-//   function playAudio(preview) {
-//     let audio = new Audio(preview);
-//     audio.play();
-//   }
+  //   function playAudio(preview) {
+  //     let audio = new Audio(preview);
+  //     audio.play();
+  //   }
 
   return (
     <div>
+      <div className="backdiv">
+        <button className="backbutton" onClick={() => navigate(-1)}>
+          <IoChevronBackCircleSharp size="30" />
+        </button>
+      </div>
       {tracks &&
         tracks.map((track, index) => {
           return (
