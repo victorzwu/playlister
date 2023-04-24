@@ -7,9 +7,14 @@ import { BsPerson } from "react-icons/bs";
 import { BiHomeAlt2 } from "react-icons/bi";
 import { MdAlbum } from "react-icons/md";
 
+import { useNavigate } from "react-router-dom";
+
+
 
 export default function AppLayout() {
   const { user, isLoading, logout } = useAuth0();
+
+  const navigate = useNavigate();
 
   if (isLoading) {
     return <div className="loading">Loading...</div>;
@@ -18,7 +23,7 @@ export default function AppLayout() {
   return (
     <div className="applayout">
       <div className="header">
-        <div className="applogo">
+        <div className="applogo" onClick={()=> navigate("/app/")}>
           <img className="logo" alt="logo" src={logo} />
           <h1>rankify</h1>
         </div>

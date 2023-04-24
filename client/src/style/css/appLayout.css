@@ -35,6 +35,10 @@
   padding-top: 100px;
 }
 
+.applogo:hover{
+  cursor:pointer;
+}
+
 .content {
   background-color: #1b1b1b;
   height: 100%;
