@@ -15,10 +15,17 @@ const requireAuth = auth({
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+      origin: "*"
+  }
+));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(morgan("dev"));
+
+
+
 
 const { PrismaClient } = pkg;
 const prisma = new PrismaClient();
@@ -34,6 +41,10 @@ app.get("/me", requireAuth, async (req, res) => {
   });
 
   res.json(user);
+});
+
+app.get("/ping", (req, res) => {
+  res.send("pong");
 });
 
 // verify user status, if not registered in our database we will create it
@@ -72,7 +83,7 @@ app.put("/spotifytoken", requireAuth, async (req, res) => {
   var spotifyApi = new SpotifyWebApi({
     clientId: process.env.REACT_APP_SPOTIFY_CLIENT_ID,
     clientSecret: process.env.REACT_APP_SPOTIFY_CLIENT_SECRET,
-    redirectUri: "http://localhost:3000/app/spotify/artists",
+    redirectUri: process.env.REACT_APP_REDIRECT_URL,
   });
 
   spotifyApi
@@ -220,7 +231,7 @@ app.get("/get-tracks/:albumId", requireAuth, async (req, res) => {
   var spotifyApi = new SpotifyWebApi({
     clientId: process.env.REACT_APP_SPOTIFY_CLIENT_ID,
     clientSecret: process.env.REACT_APP_SPOTIFY_CLIENT_SECRET,
-    redirectUri: "http://localhost:3000/app/spotify/artists",
+    redirectUri: process.env.REACT_APP_REDIRECT_URL,
   });
 
   spotifyApi.setAccessToken(user.accessToken);
@@ -325,6 +336,9 @@ app.get("/get-ranked-tracks/:albumId", requireAuth, async (req, res) => {
   }
 });
 
-app.listen(8000, () => {
-  console.log("Server running on http://localhost:8000 🎉 🚀");
+const PORT = parseInt(process.env.PORT) || 8080;
+
+app.listen(PORT, () => {
+ console.log(`Server running on http://localhost:${PORT} 🎉 🚀`);
 });
+

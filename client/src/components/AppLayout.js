@@ -10,7 +10,6 @@ import { MdAlbum } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
 
-
 export default function AppLayout() {
   const { user, isLoading, logout } = useAuth0();
 
@@ -51,7 +50,7 @@ export default function AppLayout() {
             <li className="logout-li">
               <button
                 className="btn-secondary logout-button"
-                onClick={() => logout({ returnTo: window.location.origin })}
+                onClick={() => logout({ returnTo: process.env.REACT_APP_ORIGIN })}
               >
                 Log Out
               </button>
