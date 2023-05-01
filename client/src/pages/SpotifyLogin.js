@@ -23,14 +23,14 @@ export default function SpotifyLogin() {
   return (
     <div className="container">
       <div>
-        <h1>Spotify Login</h1>
+        <h1>rankify</h1>
       </div>
       <a className="connect-link" href={SPOTIFY_AUTH_URL}>
         <div className="connect">
           <span className="connectspan">
             <img className="ispan" src={logo} alt="" />
           </span>
-          Connect with Spotify
+          Click to Start Ranking
         </div>
       </a>
     </div>
