@@ -41,27 +41,30 @@ app.post("/verify-user", requireAuth, async (req, res) => {
   const auth0Id = req.auth.payload.sub;
   const email = req.auth.payload[`${process.env.AUTH0_AUDIENCE}/email`];
   const name = req.auth.payload[`${process.env.AUTH0_AUDIENCE}/name`];
+  let picture = "";
+  if (req.auth.payload[`${process.env.AUTH0_AUDIENCE}/images`]) {
+    picture = req.auth.payload[`${process.env.AUTH0_AUDIENCE}/images`];
+  }
 
-  const user = await prisma.user.findUnique({
+  const user = await prisma.user.upsert({
     where: {
       auth0Id,
     },
+    update: {
+      name,
+      picture,
+    },
+    create: {
+      email,
+      auth0Id,
+      name,
+      picture,
+      artists: {},
+      albums: {},
+      tracks: {},
+    },
   });
-
-  if (user) {
-    res.json(user);
-  } else {
-    const newUser = await prisma.user.create({
-      data: {
-        email,
-        auth0Id,
-        name,
-        artists: {},
-      },
-    });
-
-    res.json(newUser);
-  }
+  res.json(user);
 });
 
 app.put("/spotifytoken", requireAuth, async (req, res) => {
@@ -72,103 +75,8 @@ app.put("/spotifytoken", requireAuth, async (req, res) => {
   var spotifyApi = new SpotifyWebApi({
     clientId: process.env.REACT_APP_SPOTIFY_CLIENT_ID,
     clientSecret: process.env.REACT_APP_SPOTIFY_CLIENT_SECRET,
-    redirectUri: "http://localhost:3000/app/spotify/artists",
+    redirectUri: process.env.REACT_APP_REDIRECT_URL,
   });
-
-  spotifyApi
-    .authorizationCodeGrant(code)
-    .then(async function (data) {
-      const newUser = await prisma.user.update({
-        where: {
-          auth0Id: auth0Id,
-        },
-        data: {
-          accessToken: data.body["access_token"],
-          refreshToken: data.body["refresh_token"],
-          displayName: data.body["display_name"],
-        },
-      });
-
-      spotifyApi.setAccessToken(data.body["access_token"]);
-      spotifyApi.setRefreshToken(data.body["refresh_token"]);
-
-      spotifyApi.getMyTopArtists().then(
-        function (data) {
-          const artists = data.body;
-
-          artists.items.map(
-            async (x) => {
-              // console.log(x.genres);
-              const newArtists = await prisma.artist
-                .upsert({
-                  where: {
-                    id: x.id,
-                  },
-                  update: {
-                    name: x.name,
-                    owner: { connect: { auth0Id } },
-                    image: x.images[0].url,
-                  },
-                  create: {
-                    id: x.id,
-                    albums: {},
-                    name: x.name,
-                    owner: { connect: { auth0Id } },
-                    image: x.images[0].url,
-                  },
-                })
-                .catch((e) => console.log("artists create error:", e));
-
-              spotifyApi.getArtistAlbums(x.id).then(function (album) {
-                album.body.items.map(
-                  async (y) => {
-                    if (y.id && y.name) {
-                      const newAlbum = await prisma.album.upsert({
-                        where: {
-                          id: y.id,
-                        },
-                        update: {
-                          name: y.name,
-                          artistId: x.id,
-                          image: y.images[0].url,
-                        },
-                        create: {
-                          id: y.id,
-                          name: y.name,
-                          artistId: x.id,
-                          tracks: undefined,
-                          image: y.images[0].url,
-                          rank: 0,
-                        },
-                      });
-                    }
-                  },
-                  function (err) {
-                    console.log("album create ", err);
-                  }
-                );
-              });
-            },
-            function (err) {
-              console.log("artist create", err);
-            }
-          );
-        },
-        function (err) {
-          console.log("Something went wrong!", err);
-        }
-      );
-
-      res.json(newUser);
-    })
-    .catch((e) => {
-      console.log("Something went wrong!", e);
-      res.sendStatus(400);
-    });
-});
-
-app.get("/get-artists", requireAuth, async (req, res) => {
-  const auth0Id = req.auth.payload.sub;
 
   const user = await prisma.user.findUnique({
     where: {
@@ -176,34 +84,119 @@ app.get("/get-artists", requireAuth, async (req, res) => {
     },
   });
 
-  try {
-    const artists = await prisma.artist.findMany({
-      where: { authorId: user.id },
-    });
-    res.json(artists);
-  } catch (e) {
-    console.log("artist await, ", e);
+  if (user.tokenTime && Date.now() < user.tokenTime.getTime() + 3600) {
+    res.json("success");
+  } else {
+    spotifyApi
+      .authorizationCodeGrant(code)
+      .then(async function (data) {
+        const newUser = await prisma.user.update({
+          where: {
+            auth0Id: auth0Id,
+          },
+          data: {
+            accessToken: data.body["access_token"],
+            refreshToken: data.body["refresh_token"],
+            displayName: data.body["display_name"],
+          },
+        });
+
+        res.json("refreshed");
+      })
+      .catch((e) => {
+        console.log("Something went wrong!", e);
+        res.sendStatus(400);
+      });
   }
 });
 
-app.get("/get-albums/:artistId", requireAuth, async (req, res) => {
-  // const auth0Id = req.auth.payload.sub;
-  const artistId = req.params.artistId;
+app.get("/get-artists", requireAuth, async (req, res) => {
+  const auth0Id = req.auth.payload.sub;
 
-  const artist = await prisma.artist.findUnique({
+  var spotifyApi = new SpotifyWebApi({
+    clientId: process.env.REACT_APP_SPOTIFY_CLIENT_ID,
+    clientSecret: process.env.REACT_APP_SPOTIFY_CLIENT_SECRET,
+    redirectUri: process.env.REACT_APP_REDIRECT_URL,
+  });
+
+  const user = await prisma.user.findUnique({
     where: {
-      id: artistId,
+      auth0Id,
     },
   });
 
-  try {
-    const albums = await prisma.album.findMany({
-      where: { artistId: artist.id },
+  spotifyApi.setAccessToken(user.accessToken);
+  spotifyApi.setRefreshToken(user.refreshToken);
+
+  let artistsArray = [];
+
+  const check = await spotifyApi.getMyTopArtists().then(function (data) {
+    const artists = data.body;
+
+    artists.items.map(async (x) => {
+      artistsArray = [
+        ...artistsArray,
+        {
+          id: x.id,
+          albums: {},
+          name: x.name,
+          owner: { connect: { auth0Id } },
+          image: x.images[0].url,
+        },
+      ];
     });
-    res.json(albums);
-  } catch (e) {
-    console.log("album await, ", e);
-  }
+  });
+
+  res.json(artistsArray);
+});
+
+/**
+ * Fix
+ */
+app.get("/get-albums/:artistId", requireAuth, async (req, res) => {
+  const auth0Id = req.auth.payload.sub;
+
+  var spotifyApi = new SpotifyWebApi({
+    clientId: process.env.REACT_APP_SPOTIFY_CLIENT_ID,
+    clientSecret: process.env.REACT_APP_SPOTIFY_CLIENT_SECRET,
+    redirectUri: process.env.REACT_APP_REDIRECT_URL,
+  });
+
+  const user = await prisma.user.findUnique({
+    where: {
+      auth0Id,
+    },
+  });
+
+  spotifyApi.setAccessToken(user.accessToken);
+  spotifyApi.setRefreshToken(user.refreshToken);
+
+  const artistId = req.params.artistId;
+
+  let albumsArray = [];
+
+  const check = await spotifyApi
+    .getArtistAlbums(artistId)
+    .then(function (data) {
+      const albums = data.body;
+
+      albums.items.map(async (x) => {
+        albumsArray = [
+          ...albumsArray,
+          {
+            id: x.id,
+            name: x.name,
+            artistId: artistId,
+            tracks: undefined,
+            image: x.images[0].url,
+            rank: 0,
+          },
+        ];
+      });
+    });
+
+  console.log(albumsArray);
+  res.json(albumsArray);
 });
 
 app.get("/get-tracks/:albumId", requireAuth, async (req, res) => {
@@ -220,7 +213,7 @@ app.get("/get-tracks/:albumId", requireAuth, async (req, res) => {
   var spotifyApi = new SpotifyWebApi({
     clientId: process.env.REACT_APP_SPOTIFY_CLIENT_ID,
     clientSecret: process.env.REACT_APP_SPOTIFY_CLIENT_SECRET,
-    redirectUri: "http://localhost:3000/app/spotify/artists",
+    redirectUri: process.env.REACT_APP_REDIRECT_URL,
   });
 
   spotifyApi.setAccessToken(user.accessToken);
@@ -244,6 +237,43 @@ app.put("/rank-tracks/:albumId", requireAuth, async (req, res) => {
 
   const tracks = req.body;
 
+  const user = await prisma.user.findUnique({
+    where: {
+      auth0Id,
+    },
+  });
+
+  var spotifyApi = new SpotifyWebApi({
+    clientId: process.env.REACT_APP_SPOTIFY_CLIENT_ID,
+    clientSecret: process.env.REACT_APP_SPOTIFY_CLIENT_SECRET,
+    redirectUri: process.env.REACT_APP_REDIRECT_URL,
+  });
+
+  spotifyApi.setAccessToken(user.accessToken);
+  spotifyApi.setRefreshToken(user.refreshToken);
+
+  const album = await spotifyApi.getAlbum(albumId);
+
+  console.log(album);
+
+  const newAlbum = await prisma.album.upsert({
+    where: {
+      id: albumId,
+    },
+    update: {
+      tracks: {},
+      rank: 1,
+    },
+    create: {
+      name: album.body.name,
+      image: album.body.images[0].url,
+      authorId: user.id,
+      tracks: {},
+      rank: 1,
+      id: albumId,
+    },
+  });
+
   tracks.map(async (track, index) => {
     if (track.id && track.name && track.href) {
       const newTrack = await prisma.track.upsert({
@@ -254,6 +284,7 @@ app.put("/rank-tracks/:albumId", requireAuth, async (req, res) => {
           rank: index,
         },
         create: {
+          authorId: user.id,
           id: track.id,
           name: track.name,
           albumId: albumId,
@@ -264,13 +295,6 @@ app.put("/rank-tracks/:albumId", requireAuth, async (req, res) => {
     }
   });
 
-  const updateAlbum = await prisma.album.update({
-    where: { id: albumId },
-    data: {
-      rank: 1,
-    },
-  });
-
   res.json("succeeded");
 });
 
@@ -278,7 +302,7 @@ app.delete("/delete-rank/:albumId", requireAuth, async (req, res) => {
   const auth0Id = req.auth.payload.sub;
 
   const albumId = req.params.albumId;
-  console.log(albumId)
+  console.log(albumId);
 
   const deleteTrack = await prisma.track.deleteMany({
     where: {
