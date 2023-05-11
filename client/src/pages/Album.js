@@ -1,7 +1,6 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { useAuthToken } from "../contexts/Auth0Context";
-import { useSpotify } from "../contexts/SpotifyContext";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
@@ -17,8 +16,6 @@ export default function Album() {
   const [rank, setRank] = useState(false);
 
   const { accessToken } = useAuthToken();
-
-  const { connected } = useSpotify();
 
   const printRef = useRef();
 
@@ -37,13 +34,14 @@ export default function Album() {
         }
       );
       const response = await data.json();
-      console.log("response: ", response);
+      // console.log("response: ", response);
       setAlbums(response);
     };
-    if (accessToken && connected) {
+    if(accessToken)
+    {
       getAlbums();
     }
-  }, [accessToken, connected, artistId]);
+  }, [accessToken, artistId]);
 
   const onDragEnd = (result) => {
     if (!result.destination) return;
@@ -53,7 +51,7 @@ export default function Album() {
     items.splice(result.destination.index, 0, reorderedItem);
 
     setAlbums(items);
-    console.log(items);
+    // console.log(items);
   };
 
   const handleDownloadImage = async () => {
@@ -111,7 +109,7 @@ export default function Album() {
           !rank &&
           albums.map((x) => (
             <li key={x.id}>
-              <Link className="artist-link" to={"/app/spotify/albums/" + x.id}>
+              <Link className="artist-link" to={"/spotify/app/albums/" + x.id}>
                 <div className="artist-card">
                   <img className="artist-image" src={x.image} alt="" />
                   {x.name}

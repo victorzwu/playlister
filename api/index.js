@@ -130,24 +130,28 @@ app.get("/get-artists", requireAuth, async (req, res) => {
 
   let artistsArray = [];
 
-  const check = await spotifyApi.getMyTopArtists().then(function (data) {
-    const artists = data.body;
+  try {
+    const check = await spotifyApi.getMyTopArtists().then(function (data) {
+      const artists = data.body;
 
-    artists.items.map(async (x) => {
-      artistsArray = [
-        ...artistsArray,
-        {
-          id: x.id,
-          albums: {},
-          name: x.name,
-          owner: { connect: { auth0Id } },
-          image: x.images[0].url,
-        },
-      ];
+      artists.items.map(async (x) => {
+        artistsArray = [
+          ...artistsArray,
+          {
+            id: x.id,
+            albums: {},
+            name: x.name,
+            owner: { connect: { auth0Id } },
+            image: x.images[0].url,
+          },
+        ];
+      });
     });
-  });
 
-  res.json(artistsArray);
+    res.json(artistsArray);
+  } catch (e) {
+    console.log("getArtist error: ", e);
+  }
 });
 
 /**
@@ -301,17 +305,24 @@ app.put("/rank-tracks/:albumId", requireAuth, async (req, res) => {
 app.delete("/delete-rank/:albumId", requireAuth, async (req, res) => {
   const auth0Id = req.auth.payload.sub;
 
+  const user = await prisma.user.findUnique({
+    where: {
+      auth0Id,
+    },
+  });
+
   const albumId = req.params.albumId;
   console.log(albumId);
 
   const deleteTrack = await prisma.track.deleteMany({
     where: {
       albumId: albumId,
+      authorId: user.id
     },
   });
 
-  const updateAlbum = await prisma.album.update({
-    where: { id: albumId },
+  const updateAlbum = await prisma.album.delete({
+    where: { id: albumId, },
     data: {
       rank: 0,
     },
@@ -323,11 +334,17 @@ app.delete("/delete-rank/:albumId", requireAuth, async (req, res) => {
 app.get("/get-ranked-albums", requireAuth, async (req, res) => {
   const auth0Id = req.auth.payload.sub;
 
+  const user = await prisma.user.findUnique({
+    where: {
+      auth0Id,
+    },
+  });
+
   try {
     const albums = await prisma.album.findMany({
-      where: { rank: 1 },
+      where: { rank: 1, authorId: user.id },
     });
-    console.log("albums", albums);
+    console.log("albums");
     res.json(albums);
   } catch (e) {
     console.log(e);
@@ -339,9 +356,15 @@ app.get("/get-ranked-tracks/:albumId", requireAuth, async (req, res) => {
 
   const albumId = req.params.albumId;
 
+  const user = await prisma.user.findUnique({
+    where: {
+      auth0Id,
+    },
+  });
+
   try {
     const tracks = await prisma.track.findMany({
-      where: { albumId: albumId },
+      where: { albumId: albumId, authorId: user.id },
     });
     res.json(tracks);
   } catch (e) {

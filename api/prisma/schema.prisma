@@ -47,7 +47,7 @@ model Track {
   id          String        @id @unique
   name        String        
   preview     String
-  owner       User             @relation(fields: [authorId], references: [id])
+  owner       User          @relation(fields: [authorId], references: [id])
   authorId    Int    
   album       Album         @relation(fields: [albumId], references: [id])
   albumId     String 

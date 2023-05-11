@@ -1,7 +1,6 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { useAuthToken } from "../contexts/Auth0Context";
-import { useSpotify } from "../contexts/SpotifyContext";
 import { Link } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import "../style/css/format.css";
@@ -14,8 +13,6 @@ export default function Artist() {
   const [rank, setRank] = useState(false);
 
   const { accessToken } = useAuthToken();
-
-  const { connected } = useSpotify();
 
   const printRef = useRef();
 
@@ -31,13 +28,16 @@ export default function Artist() {
         },
       });
       const response = await data.json();
-      console.log("response: ", response);
-      setArtists(response);
+      // console.log("response: ", response);
+
+        setArtists(response);
+
     };
-    if (accessToken && connected) {
+    if(accessToken)
+    {
       getArtists();
     }
-  }, [accessToken, connected]);
+  }, [accessToken]);
 
   const onDragEnd = (result) => {
     if (!result.destination) return;
@@ -47,7 +47,7 @@ export default function Artist() {
     items.splice(result.destination.index, 0, reorderedItem);
 
     setArtists(items);
-    console.log(items);
+    // console.log(items);
   };
 
   const handleDownloadImage = async () => {

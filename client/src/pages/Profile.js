@@ -36,16 +36,16 @@ export default function Profile() {
             <img src={dbUser.picture} width="150" alt="profile avatar" />
           </div>
         )}
-        <div>
+        <div className="normal">
           <p className="normal-Text">Nickname: {user.nickname}</p>
         </div>
-        <div>
+        <div className="normal">
           <p className="normal-Text">Email: {user.email}</p>
         </div>
-        <div>
+        <div className="normal">
           <p className="normal-Text">Auth0Id: {user.sub}</p>
         </div>
-        <div>
+        <div className="normal">
           <p className="normal-Text">
             Email verified: {user.email_verified?.toString()}
           </p>

@@ -57,7 +57,7 @@ export default function Ranked() {
               <div className="ranked-card">
                 <Link
                   className="artist-link"
-                  to={"/app/spotify/rankedalbums/" + x.id}
+                  to={"/spotify/app/rankedalbums/" + x.id}
                 >
                   <div className="artist-card extra-card">
                     <img className="artist-image" src={x.image} alt="" />

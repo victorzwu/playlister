@@ -19,7 +19,7 @@ export default function useAuthSpotify(accessToken, code) {
             }),
           }
         );
-        console.log(data);
+        // console.log(data);
         if (data) {
           setConnected(true);
         } else {
