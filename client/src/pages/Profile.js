@@ -6,6 +6,8 @@ import { useAuthToken } from "../contexts/Auth0Context";
 export default function Profile() {
   const { user } = useAuth0();
 
+  const [artists, setArtists] = useState([]);
+
   const { accessToken } = useAuthToken();
 
   const [dbUser, setDbUser] = useState(null);
@@ -23,8 +25,23 @@ export default function Profile() {
 
       setDbUser(response);
     };
+
+    const getArtists = async () => {
+      const data = await fetch(`${process.env.REACT_APP_API_URL}/get-artists`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      const response = await data.json();
+      // console.log("response: ", response);
+
+      setArtists(response);
+    };
     if (accessToken) {
       getUser();
+      getArtists();
     }
   }, [accessToken]);
 
@@ -42,14 +59,16 @@ export default function Profile() {
         <div className="normal">
           <p className="normal-Text">Email: {user.email}</p>
         </div>
-        <div className="normal">
-          <p className="normal-Text">Auth0Id: {user.sub}</p>
-        </div>
-        <div className="normal">
-          <p className="normal-Text">
-            Email verified: {user.email_verified?.toString()}
-          </p>
-        </div>
+        <p className="normal-Text">My Top Artists: </p>
+        {artists &&
+          artists.map((x) => (
+            <li className="normal">
+                <div className="normal-Text">
+                  {x.name}
+                </div>
+            </li>
+          ))}
+
       </div>
     </div>
   );
