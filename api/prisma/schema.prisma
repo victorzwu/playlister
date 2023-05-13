@@ -3,11 +3,12 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
 }
-
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  url = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
 }
 
 model User {
@@ -15,36 +16,40 @@ model User {
   email         String      @unique @default("")
   auth0Id       String      @unique @default("")
   name          String?
+  picture       String?
   displayName   String?     @unique
   accessToken   String?     @db.Text
   refreshToken  String?     @unique @default("")
-  tokenTime     DateTime?   @updatedAt
+  tokenTime     DateTime?   
   artists       Artist[] 
+  albums        Album[]
+  tracks        Track[]
 }
 
 model Artist {
   id          String           @id @unique
-  albums      Album[]
   name        String
+  image       String
   owner       User             @relation(fields: [authorId], references: [id])
   authorId    Int    
-  image       String
 }
 
 model Album {
   id          String          @id @unique
-  tracks      Track[]
   name        String
-  artist      Artist          @relation(fields: [artistId], references: [id])
-  artistId    String
-  rank        Int?
   image       String          @default("")
+  owner       User             @relation(fields: [authorId], references: [id])
+  authorId    Int    
+  tracks      Track[]
+  rank        Int?
 }
 
 model Track {
   id          String        @id @unique
   name        String        
   preview     String
+  owner       User          @relation(fields: [authorId], references: [id])
+  authorId    Int    
   album       Album         @relation(fields: [albumId], references: [id])
   albumId     String 
   rank        Int?          
