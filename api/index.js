@@ -317,12 +317,12 @@ app.delete("/delete-rank/:albumId", requireAuth, async (req, res) => {
   const deleteTrack = await prisma.track.deleteMany({
     where: {
       albumId: albumId,
-      authorId: user.id
+      
     },
   });
 
-  const updateAlbum = await prisma.album.delete({
-    where: { id: albumId, },
+  const updateAlbum = await prisma.album.update({
+    where: { id: albumId },
     data: {
       rank: 0,
     },
