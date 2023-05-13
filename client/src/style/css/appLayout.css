@@ -46,7 +46,7 @@
 }
 
 .menu{
-  width: 23dvw;
+  width: 21dvw;
 }
 
 .menu-list {
@@ -100,7 +100,7 @@
   font-family: "Gotham Rounded Bold";
 }
 
-@media (max-width: 850px) {
+@media (max-width: 900px) {
 
 .content {
   width: 100%;

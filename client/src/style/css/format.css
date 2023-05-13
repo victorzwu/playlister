@@ -78,10 +78,54 @@
 
 .drag-card {
   flex-direction: row;
-  height: 20dvb;
+  height: 10dvb;
   width: 100%;
   font-family: "Gotham Rounded";
   color: white;
+}
+
+.download-image-section {
+  aspect-ratio: 9 / 16;
+  max-width: 80%;
+  max-height: 80%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.save-title {
+  font-size: 1.5vh;
+  color: #1db954;
+  /* margin: 0.67em 0; */
+  font-family: "Gotham Rounded Bold";
+  background-color: black;
+  padding: 0.5vh;
+}
+
+.save-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex-grow: 1;
+  padding: 0.5vh;
+  background-color: black;
+}
+
+.save-card {
+  display: flex;
+  background-color: black;
+  align-items: center;
+  justify-content: space-around;
+  justify-items: flex-start;
+  flex-direction: row;
+  height: 10%;
+  width: 100%;
+  font-family: "Gotham Rounded";
+  color: white;
+  font-size: 1vh;
+}
+.save-card:hover {
+  background-color: #b3b3b3;
 }
 
 .play-button {
@@ -96,7 +140,7 @@
 }
 
 .over-text {
-    display: flex;
+  display: flex;
   width: 80%;
   justify-content: center;
 }
@@ -138,22 +182,26 @@
   margin-bottom: 2dvb;
 }
 
-@media (max-width: 850px) {
+@media (max-width: 900px) {
   .artist-container {
     grid-template-columns: repeat(2, 1fr);
     gap: 1dvb;
   }
 
-  .index-text {
+  /* .index-text {
     display:none;
-  }
+  } */
 
   .track-text {
-    display:none;
+    display: none;
   }
 
   .play-button {
     width: 20dvb;
+  }
+
+  .drag-card {
+    height: 8dvb;
   }
 
   .backdiv {

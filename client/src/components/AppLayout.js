@@ -10,7 +10,6 @@ import { MdAlbum } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
 
-
 export default function AppLayout() {
   const { user, isLoading, logout } = useAuth0();
 
@@ -23,7 +22,7 @@ export default function AppLayout() {
   return (
     <div className="applayout">
       <div className="header">
-        <div className="applogo" onClick={()=> navigate("/app/")}>
+        <div className="applogo" onClick={()=> navigate("/spotify/app/artists")}>
           <img className="logo" alt="logo" src={logo} />
           <h1>rankify</h1>
         </div>
@@ -31,27 +30,27 @@ export default function AppLayout() {
         <nav className="menu">
           <ul className="menu-list">
             <li>
-              <Link className="btn-primary menu-button" to="/app/">
+              <Link className="btn-primary menu-button" to="/spotify/app/artists">
                 <BiHomeAlt2 /> Home
               </Link>
             </li>
             <li>
               <Link
                 className="btn-primary menu-button"
-                to="/app/spotify/rankedalbums"
+                to="/spotify/app/rankedalbums"
               >
                 <MdAlbum /> Ranked Albums
               </Link>
             </li>
             <li>
-              <Link className="btn-primary menu-button" to="/app/profile">
+              <Link className="btn-primary menu-button" to="/spotify/app/profile">
                 <BsPerson /> Profile
               </Link>
             </li>
             <li className="logout-li">
               <button
                 className="btn-secondary logout-button"
-                onClick={() => logout({ returnTo: window.location.origin })}
+                onClick={() => logout({ returnTo: process.env.REACT_APP_ORIGIN })}
               >
                 Log Out
               </button>

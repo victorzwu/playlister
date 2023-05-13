@@ -71,7 +71,7 @@ root.render(
       domain={process.env.REACT_APP_AUTH0_DOMAIN}
       clientId={process.env.REACT_APP_AUTH0_CLIENT_ID}
       authorizationParams={{
-        redirect_uri: `${window.location.origin}/verify-user`,
+        redirect_uri: `${process.env.REACT_APP_ORIGIN}/verify-user`,
         audience: process.env.REACT_APP_AUTH0_AUDIENCE,
         scope: requestedScopes.join(" "),
       }}
@@ -81,32 +81,35 @@ root.render(
           <Routes>
             <Route path="/" element={<App />} />
             <Route path="verify-user" element={<VerifyUser />} />
+            <Route path="spotifylogin" element={<SpotifyLogin />} />
             <Route
-              path="app"
+              path="spotify"
               element={
-                <RequireAuth0>
-                  <AppLayout />
-                </RequireAuth0>
+                <SpotifyProvider>
+                  <Outlet />
+                </SpotifyProvider>
               }
             >
-              <Route path="profile" element={<Profile />} />
-              <Route index element={<SpotifyLogin />} />
               <Route
-                path="spotify"
+                path="app"
                 element={
-                  <SpotifyProvider>
-                    <Outlet />
-                  </SpotifyProvider>
+                  <RequireAuth0>
+                    <AppLayout />
+                  </RequireAuth0>
                 }
               >
+                <Route path="profile" element={<Profile />} />
                 <Route exact path="artists" element={<Artist />} />
                 <Route path="artists/:artistId" element={<Album />} />
                 <Route path="albums/:albumId" element={<Track />} />
                 <Route exact path="rankedalbums" element={<Ranked />} />
-                <Route path="rankedalbums/:albumId" element={<RankedTracks />} />
+                <Route
+                  path="rankedalbums/:albumId"
+                  element={<RankedTracks />}
+                />
               </Route>
+              <Route path="*" element={<Error />} />
             </Route>
-            <Route path="*" element={<Error />} />
           </Routes>
         </BrowserRouter>
       </Auth0TokenProvider>

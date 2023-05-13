@@ -11,20 +11,44 @@
 .profile-card{
     background-color: black;
     padding-inline: 5%;
-    padding-top: 20%;
+    padding-top: 5%;
     padding-bottom: 15%;
     border-width: 3px;
+    width: 55%;
+    height: 55%;
+    overflow:scroll;
+}
+
+.normal{
+    display: flex;
+    width: 100%;
 }
 
 .normal-Text{
+    display: flex;
     font-size: 20;
     font-family: "Gotham Rounded";
-    color:white
+    color:white;
+    overflow-wrap: break-word;
+    overflow: scroll;
 }
 
 .user-picture{
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-bottom: 25%;
+    padding-bottom: 5%;
+}
+
+
+@media (max-width: 900px) {
+    .profile-card{
+        background-color: black;
+        padding-inline: 5%;
+        padding-top: 5%;
+        padding-bottom: 10%;
+        border-width: 3px;
+        width: 90%;
+        height: 100%;
+    }
 }

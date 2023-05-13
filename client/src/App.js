@@ -11,7 +11,7 @@ function App() {
 
   return (
     <div className="app">
-      <div class="applogo">
+      <div className="applogo">
         <img className="logo" alt="logo" src={logo} />
         <h1>rankify</h1>
       </div>
@@ -21,7 +21,7 @@ function App() {
             Login
           </button>
         ) : (
-          <button className="btn-primary" onClick={() => navigate("/app")}>
+          <button className="btn-primary" onClick={() => navigate("/spotifylogin")}>
             Enter App
           </button>
         )}

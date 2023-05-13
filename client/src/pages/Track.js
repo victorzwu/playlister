@@ -1,14 +1,14 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { useAuthToken } from "../contexts/Auth0Context";
-import { useSpotify } from "../contexts/SpotifyContext";
 import { useParams } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import html2canvas from "html2canvas";
 import "../style/css/format.css";
-import { BsFillPlayCircleFill } from "react-icons/bs";
+import { BsFillPlayCircleFill, BsFillPauseCircleFill } from "react-icons/bs";
 import { IoChevronBackCircleSharp } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import ReactModal from "react-modal";
 
 export default function Track() {
   const albumId = useParams().albumId;
@@ -17,11 +17,14 @@ export default function Track() {
 
   const { accessToken } = useAuthToken();
 
-  const { connected } = useSpotify();
-
   const navigate = useNavigate();
 
-  // const [audioPlaying, setAudioPlaying] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const [isPlaying, setPlaying] = useState(false);
+  const [currentSong, setCurrentSong] = useState(null);
+
+  const audio = useRef(null);
 
   const printRef = useRef();
 
@@ -38,13 +41,13 @@ export default function Track() {
         }
       );
       const response = await data.json();
-      console.log("response: ", response);
+      // console.log("response: ", response);
       setTracks(response);
     };
-    if (accessToken && connected) {
+    if (accessToken) {
       getTracks();
     }
-  }, [accessToken, connected, albumId]);
+  }, [accessToken, albumId]);
 
   const onDragEnd = (result) => {
     if (!result.destination) return;
@@ -54,7 +57,7 @@ export default function Track() {
     items.splice(result.destination.index, 0, reorderedItem);
 
     setTracks(items);
-    console.log(items);
+    // console.log(items);
   };
 
   const handleDownloadImage = async () => {
@@ -64,8 +67,6 @@ export default function Track() {
       letterRendering: 1,
       allowTaint: false,
       useCORS: true,
-      width: 1080,
-      height: 1920,
     });
 
     const data = canvas.toDataURL("image/jpg");
@@ -83,9 +84,22 @@ export default function Track() {
     }
   };
 
-  function playAudio(audio) {
-    audio.play();
-  }
+  const playAudio = (e) => {
+    const song = e;
+    if (currentSong === song) {
+      isPlaying ? audio.current.pause() : audio.current.play();
+      setPlaying(!isPlaying);
+    } else {
+      if (audio.current) {
+        audio.current.pause();
+      }
+
+      setCurrentSong(song);
+      setPlaying(true);
+      audio.current = new Audio(song);
+      audio.current.play();
+    }
+  };
 
   async function submit() {
     const data = await fetch(
@@ -104,8 +118,75 @@ export default function Track() {
     }
   }
 
+  function PlayButton(props) {
+    if (currentSong === props.url && isPlaying) {
+      return <BsFillPauseCircleFill size="40" />;
+    } else {
+      return <BsFillPlayCircleFill size="40" />;
+    }
+  }
+
+  function openModal() {
+    setModalOpen(true);
+  }
+
+  function closeModal() {
+    setModalOpen(false);
+  }
+
   return (
     <div>
+      <ReactModal
+        style={{
+          overlay: {
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(29, 185, 84, 0.75)",
+          },
+          content: {
+            position: "absolute",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            border: "none",
+            background: "black",
+            maxHeight: "90%",
+            maxWidth: "60%",
+            WebkitOverflowScrolling: "touch",
+            borderRadius: "0px",
+            outline: "none",
+            padding: "10px",
+            margin: "auto",
+          },
+        }}
+        isOpen={modalOpen}
+      >
+        <div className="download-image-section" ref={printRef}>
+          <div className="save-title">ranked with rankify</div>
+          <div className="save-container">
+            {tracks &&
+              tracks.map((track, index) => {
+                return (
+                  <div className="save-card">
+                    <div className="index-text">{index + 1}</div>
+                    <div className="name-text">{track.name}</div>
+                  </div>
+                );
+              })}
+          </div>
+        </div>
+        <button
+          className="btn-primary ranked-btn"
+          onClick={handleDownloadImage}
+        >
+          Save Image
+        </button>
+        <button className="btn-primary ranked-btn" onClick={closeModal}>
+          X
+        </button>
+      </ReactModal>
       <div className="backdiv">
         <button className="backbutton" onClick={() => navigate(-1)}>
           <IoChevronBackCircleSharp size="30" />
@@ -113,27 +194,22 @@ export default function Track() {
       </div>
       <div className="rank-btn-container">
         <h1 className="over-text">Rank your favorite tracks.</h1>
-
-        <button
-          className="btn-primary ranked-btn"
-          onClick={handleDownloadImage}
-        >
-          Save Image
+        <button className="btn-primary ranked-btn" onClick={openModal}>
+          Create Instagram Story
         </button>
-
         <button className="btn-primary ranked-btn" onClick={() => submit()}>
           Submit Ranking
         </button>
       </div>
-      <div ref={printRef}>
+      <div>
         {tracks && (
           <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId={albumId}>
               {(provided) => (
                 <div ref={provided.innerRef} {...provided.droppableProps}>
                   {tracks.map((track, index) => {
-                    let audio = new Audio(track.preview_url);
-                    console.log(track);
+                    const audio = track.preview_url;
+                    // console.log(track);
                     return (
                       <Draggable
                         key={track.id}
@@ -153,7 +229,7 @@ export default function Track() {
                                   playAudio(audio);
                                 }}
                               >
-                                <BsFillPlayCircleFill size="40" />
+                                <PlayButton url={track.preview_url} />
                               </button>
                               <div className="index-text">{index + 1}</div>
                               <div className="name-text">{track.name}</div>
