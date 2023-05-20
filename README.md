@@ -1,68 +1,41 @@
-![rankify](/client/assets/rankify_header "rankify")
+<p align="center">
+  <img src="./client/assets/rankify_header.png "rankify"" />
+</p>
 
-## Available Scripts
+## 1. Overview
 
-In the project directory, you can run:
+A React app that allows users to rank their favorite Spotify artists, albums, and tracks, enhancing their music curation experience. Features interactive and visually appealing UI features, such as drag and drop elements, to provide responsive user feedback and create a visually captivating layout.
 
-### `npm start`
+Users can generate shareable Instagram stories of their favorite tracks and CRUD operations are enabled for storing user rankings.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+You can find the production link of the app [here](https://rankify.vercel.app).
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 2. Technologies
 
-### `npm test`
+This reaction was developed using React, Node, Express, and Prisma. The production deployment uses Auth0 for user authentication, PlanetScale for database deployment, Google Cloud for Web API deployment, and Vercel for web hosting.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 3. Screenshots
 
-### `npm run build`
+![homepage](./client/assets/homepage.png "homepage")
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+![artistselection](./client/assets/artistselection.png "artistselection")
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+![ranktracks](./client/assets/ranktracks.png "ranktracks")
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+![instagramstory](./client/assets/instagramstory.png "instagramstory")
 
-### `npm run eject`
+![submittedrankings](./client/assets/submittedrankings.png "submittedrankings")
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+![profile](./client/assets/profile.png "profile")
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 4. Installation
+Clone and install dependencies:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+    git clone https://github.com/victorzwu/rankify.git
+    cd api
+    npm install
+    cd ..
+    cd client
+    npm install
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+You will need to get a Spotify Developer key as well as integrate Auth0 into your application and put the keys within the .env file. In the API side, you should put your Auth0 keys and MySQL database url within an .env file.
