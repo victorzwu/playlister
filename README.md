@@ -26,8 +26,6 @@ This reaction was developed using React, Node, Express, and Prisma. The producti
 
 ![submittedrankings](./client/assets/submittedrankings.png "submittedrankings")
 
-![profile](./client/assets/profile.png "profile")
-
 ## 4. Installation
 Clone and install dependencies:
 
