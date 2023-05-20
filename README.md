@@ -8,7 +8,7 @@ A React app that allows users to rank their favorite Spotify artists, albums, an
 
 Users can generate shareable Instagram stories of their favorite tracks and CRUD operations are enabled for storing user rankings.
 
-You can find the production link of the app [here](https://rankify.vercel.app).
+You can find the production link of the app [here](https://rankify.vercel.app). (Currently waiting for approval from Spotify for quota extension request, so at the moment only authorized users can login).
 
 ## 2. Technologies
 
